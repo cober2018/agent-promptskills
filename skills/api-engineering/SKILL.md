@@ -1,6 +1,6 @@
 ---
 name: api-engineering
-description: API 工程能力——REST/GraphQL/gRPC 接口设计与实现、中间件模式、错误处理、认证授权、请求校验、WebSocket 实时推送、API 版本管理。当任务涉及接口开发、中间件编写、认证实现、实时通信时激活。
+description: API 工程能力——REST/GraphQL/gRPC 接口设计与实现、中间件模式、错误处理、认证授权、请求校验、WebSocket 实时推送、API 版本管理。扩展支持 Python FastAPI 异步 API 设计模式与 gRPC/Protobuf 内部微服务高效通信规范。
 ---
 
 🔌 API 工程（API Engineering）
@@ -77,6 +77,47 @@ description: API 工程能力——REST/GraphQL/gRPC 接口设计与实现、中
     503 Service Unavail → 服务暂时不可用（维护、过载）
 
 
+📌 Python FastAPI 异步设计规范
+
+  1. FastAPI 依赖注入系统（Dependency Injection）：
+    - 统一使用 `Depends` 声明数据库 Session 生命周期、Redis 连接获取、JWT 鉴权拦截以及当前登录用户解析。
+    - 示例：
+      ```python
+      @app.get("/api/v1/factors")
+      async def get_factors(
+          db: AsyncSession = Depends(get_db_session),
+          current_user: User = Depends(get_current_active_user)
+      ):
+          ...
+      ```
+
+  2. 严格使用 Pydantic 契约校验：
+    - 入参使用 `BaseModel`（Pydantic）接收，强制配置 `extra = "forbid"` 以绝对禁止客户端提交未经声明的杂质字段。
+    - 充分利用 Pydantic 强大的 Field 校验（如 `Field(gt=0, description="因子阈值")`），在路由入口处自动阻断非法输入。
+
+
+📌 gRPC 与 Protobuf 内部微服务通信
+
+  1. 严格契约优先（Contract First）：
+    - 内部微服务（如量化引擎、回测系统、主数据服务）调用一律禁止使用 HTTP REST，全面推崇 gRPC 协议。
+    - 服务及参数必须在 `.proto` 文件中清晰、严格地定义。
+    - 示例：
+      ```protobuf
+      service BacktestService {
+          rpc StartBacktest (BacktestRequest) returns (BacktestResponse);
+      }
+      ```
+
+  2. 错误码对齐规范：
+    - gRPC 的错误返回必须通过标准的 `status` 响应码透传给网关（Nginx 或 API 网关）。
+    - 对应关系：
+      - `codes.InvalidArgument` $\rightarrow$ HTTP 400 Bad Request
+      - `codes.Unauthenticated` $\rightarrow$ HTTP 401 Unauthorized
+      - `codes.PermissionDenied` $\rightarrow$ HTTP 403 Forbidden
+      - `codes.NotFound` $\rightarrow$ HTTP 404 Not Found
+      - `codes.Internal` $\rightarrow$ HTTP 500 Internal Server Error
+
+
 📌 协议选型
 
   REST
@@ -104,7 +145,7 @@ description: API 工程能力——REST/GraphQL/gRPC 接口设计与实现、中
       1. 请求 ID 生成（traceId）
       2. 访问日志记录
       3. CORS 处理
-      4. 安全头设置（Helmet）
+      4. 安全头设置（Helmet / FastAPISecurity）
       5. 限流
       6. 认证（解析 Token）
       7. 请求体解析（JSON / multipart）
@@ -121,18 +162,18 @@ description: API 工程能力——REST/GraphQL/gRPC 接口设计与实现、中
     请求 ID（traceId）：
       每个请求生成唯一 ID（UUID v4）
       如果上游传了 X-Request-Id 则复用
-      全链路透传：日志、下游调用、消息队列
+      全链路透传：日志、下游调用、消息队列、gRPC Context 元数据
       响应头返回 X-Request-Id 方便排查
 
     限流中间件：
       按 IP 限流：防刷接口（登录、注册、短信验证码）
       按用户限流：防止单用户滥用
-      按 API 限流：保护特定的昂贵接口
+      按 API 限流：保护特定的昂贵接口（如回测启动）
       返回 429 + Retry-After 头
 
     请求校验：
-      在 Controller 入口处校验，不在 Service 里校验
-      校验失败立即返回 400，不执行任何业务逻辑
+      在 Controller/Route 入口处校验，不在 Service 里校验
+      校验失败立即返回 400/422，不执行任何业务逻辑
       校验规则与业务逻辑分离（声明式校验 > 命令式校验）
       白名单校验：只接受已知字段，忽略或拒绝未知字段
 
@@ -236,9 +277,8 @@ description: API 工程能力——REST/GraphQL/gRPC 接口设计与实现、中
 
 
 📌 API 工程产出物清单
-  API 契约文档（OpenAPI / Protobuf 定义）
-  错误码表（码、含义、HTTP 状态码、处理建议）
-  认证授权方案文档
-  中间件链配置说明
-  WebSocket 消息协议定义（如有）
-  API 变更日志（CHANGELOG）
+  - API 契约文档（OpenAPI / Protobuf 定义文件）
+  - 错误码映射表（包含 HTTP 状态码与 gRPC 响应状态对照）
+  - 认证授权与 Token 管理方案说明
+  - 中间件编排链路拓扑
+  - WebSocket 实时推送消息协议定义

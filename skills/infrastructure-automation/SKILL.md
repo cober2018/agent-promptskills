@@ -1,10 +1,50 @@
 ---
 name: infrastructure-automation
-description: 基础设施自动化能力——IaC（Terraform/Pulumi）、容器编排（Docker/K8s）、多环境管理、密钥管理、云资源配置、成本优化。当任务涉及基础设施搭建、容器化、环境管理、云资源规划时激活。
+description: 基础设施自动化能力——IaC（Terraform/Pulumi）、容器编排（Docker/K8s）、多环境管理、密钥管理、云资源配置、成本优化。当任务涉及基础设施搭建、容器化、环境管理、云资源规划时激活。扩展支持 Docker 极简多阶段 Distroless 安全构建及镜像层级高速缓存优化。
 ---
 
 🏗️ 基础设施自动化（Infrastructure Automation）
-核心问题：基础设施怎么搭？怎么保证可复现？怎么控制成本？
+核心问题：基础设施怎么搭？容器怎么构建得既安全又小巧？怎么控制成本？
+
+
+📌 Docker 极简与高安全多阶段构建
+
+  1. 多阶段构建（Multi-stage Build）核心模板：
+    - 必须将“编译构建阶段”与“生产运行阶段”彻底剥离。
+    - **Go 极简安全构建示例**：
+      ```dockerfile
+      # 阶段一：构建编译器环境
+      FROM golang:1.22-alpine AS builder
+      WORKDIR /app
+      RUN apk add --no-cache git ca-certificates && update-ca-certificates
+      COPY go.mod go.sum ./
+      RUN go mod download
+      COPY . .
+      # 静态编译二进制，剔除符号表，减小体积
+      RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o main .
+
+      # 阶段二：生产极简镜像
+      FROM gcr.io/distroless/static-debian12:latest-amd64
+      COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+      COPY --from=builder /app/main /main
+      # 强制使用 nonroot 安全用户启动
+      USER 65532:65532
+      ENTRYPOINT ["/main"]
+      ```
+
+  2. 容器非 root 用户运行规范（Non-root Security）：
+    - 绝不允许直接在容器里运行默认的 root (UID 0) 用户。
+    - 如果使用 Distroless，直接指定非 root 用户 ID `USER 65532:65532`。
+    - 如果使用 Alpine/Debian 基础镜像，必须手动创建用户组并切换：
+      ```dockerfile
+      RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+      USER appuser
+      ```
+
+  3. 高效 Layer 缓存优化（Layer Caching）：
+    - 严格根据 Docker 镜像分层缓存特性安排指令顺序。
+    - 变化极低的文件/步骤在前：如复制依赖定义（`package.json`、`go.mod`、`requirements.txt`）以及执行依赖下载，放在第一步拷贝。
+    - 频繁变动的源代码拷贝（`COPY . .`）排在依赖下载之后，防止任何源码的微小修改击穿依赖缓存，导致每次都需要重新慢速下载依赖。
 
 
 📌 IaC（Infrastructure as Code）
@@ -28,49 +68,19 @@ description: 基础设施自动化能力——IaC（Terraform/Pulumi）、容器
         prod/                生产环境配置
       global/                跨环境共享资源（IAM、DNS）
 
-  模块设计原则：
-    每个模块做一件事，有明确的输入（variables）和输出（outputs）
-    模块内部封装复杂度，对外暴露简洁接口
-    通过变量区分环境差异（实例规格、副本数、备份策略）
-    模块有文档和使用示例
 
-  变更流程：
-    1. 本地修改 → terraform plan（查看变更计划）
-    2. 提交 PR → CI 自动运行 plan 并评论到 PR
-    3. 团队 review plan 输出
-    4. 合并到 main → CI 自动 apply
-    5. 验证基础设施状态
+📌 Kubernetes 资源配置
 
+  资源限制（必须设置）：
+    requests：保证最低资源（调度依据）
+    limits：限制最大资源（防止打爆节点）
+    CPU requests = 平均使用量，limits = 峰值的 2 倍
+    Memory requests = limits（避免 OOM Kill）
 
-📌 容器编排
-
-  Docker 最佳实践：
-    多阶段构建：减小最终镜像体积
-    非 root 用户运行：安全加固
-    .dockerignore：排除不需要的文件
-    固定基础镜像版本：FROM node:20.11-alpine（不用 latest）
-    一个容器一个进程
-    健康检查：HEALTHCHECK CMD curl -f http://localhost:8080/health
-
-  Kubernetes 资源配置：
-    资源限制（必须设置）：
-      requests：保证最低资源（调度依据）
-      limits：限制最大资源（防止打爆节点）
-      CPU requests = 平均使用量，limits = 峰值的 2 倍
-      Memory requests = limits（避免 OOM Kill）
-
-    探针配置（必须设置）：
-      livenessProbe：检测容器是否存活（失败则重启）
-      readinessProbe：检测容器是否就绪（失败则移出流量）
-      startupProbe：检测容器是否启动完成（给慢启动应用宽限期）
-
-    Pod 反亲和性：
-      核心服务的 Pod 分散到不同节点
-      避免单节点故障导致服务完全不可用
-
-    PDB（Pod Disruption Budget）：
-      限制同时不可用的 Pod 数量
-      保证滚动更新和节点维护时服务可用
+  探针配置（必须设置）：
+    livenessProbe：检测容器是否存活（失败则重启）
+    readinessProbe：检测容器是否就绪（失败则移出流量）
+    startupProbe：检测容器是否启动完成（给慢启动应用宽限期）
 
 
 📌 多环境管理
@@ -80,17 +90,6 @@ description: 基础设施自动化能力——IaC（Terraform/Pulumi）、容器
     staging    预发布环境  尽量模拟生产，用于集成测试和验收
     prod       生产环境    严格管控，只能通过 CI/CD 部署
 
-  环境差异管理：
-    通过变量控制：实例规格、副本数、备份频率
-    dev 用最小规格（省成本），prod 按容量规划配置
-    Staging 数据：脱敏后的生产数据子集（不是空库）
-    环境隔离：独立 VPC / 命名空间 / 数据库实例
-
-  环境配置规范：
-    通过 ConfigMap / 环境变量注入，不硬编码在镜像中
-    敏感配置通过 Secret / Vault 管理
-    配置版本化，和应用代码一起管理
-
 
 📌 密钥管理
 
@@ -99,18 +98,6 @@ description: 基础设施自动化能力——IaC（Terraform/Pulumi）、容器
     CI/CD：平台内置 Secrets（GitHub Secrets / GitLab Variables）
     生产环境：Vault / AWS Secrets Manager / GCP Secret Manager
 
-  密钥轮换：
-    数据库密码：每 90 天自动轮换
-    API Token：每 180 天轮换
-    TLS 证书：自动续期（cert-manager / Let's Encrypt）
-    轮换过程零停机：新旧密钥并存过渡期
-
-  密钥引用规范：
-    应用通过环境变量读取，不通过文件
-    日志中密钥必须脱敏
-    代码审查时检查是否有硬编码密钥
-    CI 中集成密钥泄露检测工具
-
 
 📌 成本优化
 
@@ -118,25 +105,11 @@ description: 基础设施自动化能力——IaC（Terraform/Pulumi）、容器
     监控实际资源使用率（CPU / 内存 / 磁盘）
     使用率持续 < 30% 的实例 → 降规格
     使用率持续 > 70% 的实例 → 升规格或加实例
-    定期（每月）审查资源使用报告
-
-  成本控制策略：
-    开发/测试环境非工作时间自动关机（省 60%+）
-    稳定负载用预留实例 / Savings Plans（省 30-50%）
-    突发负载用 Spot 实例（省 60-90%，需容忍中断）
-    存储冷热分离：低频数据转低成本存储层
-    清理未使用的资源：闲置 EBS、未绑定 EIP、过期快照
-
-  成本可见性：
-    按团队/服务/环境打标签（tagging），归属成本
-    每月生成成本报告，追踪趋势
-    设置预算告警，超支前预警
 
 
 📌 基础设施自动化产出物清单
-  IaC 代码（Terraform / Pulumi 模块 + 环境配置）
-  Dockerfile + docker-compose（开发环境）
-  K8s 资源定义（Deployment / Service / Ingress / HPA）
-  环境管理文档（dev / staging / prod 差异说明）
-  密钥管理规范（存储方式 + 轮换策略）
-  成本优化报告（当前成本 + 优化建议 + 预期节省）
+  - 高效多阶段、非 root 安全 Dockerfile 模版
+  - docker-compose 本地快速管线编排配置文件
+  - Terraform / Pulumi 基础设施定义代码
+  - Kubernetes 资源描述配置
+  - 动态多环境变量与 Secret 注入机制方案

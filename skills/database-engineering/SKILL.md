@@ -1,6 +1,6 @@
 ---
 name: database-engineering
-description: 数据库工程能力——Schema 设计模式、索引策略、查询优化、缓存实现、数据迁移、ETL 管道。当任务涉及数据库表设计、SQL 优化、缓存策略、数据管道实现时激活。
+description: 数据库工程能力——Schema 设计模式、索引策略、查询优化、缓存实现、数据迁移、ETL 管道。当任务涉及数据库表设计、SQL 优化、缓存策略、数据管道实现时激活。扩展支持 MongoDB 复合索引与高级聚合管道调优。
 ---
 
 💾 数据库工程（Database Engineering）
@@ -9,13 +9,13 @@ description: 数据库工程能力——Schema 设计模式、索引策略、查
 
 📌 Schema 设计原则
 
-  命名规范：
+  关系型数据库命名规范：
     表名：小写复数（users, orders, order_items）
     字段名：小写下划线（created_at, user_id, is_active）
     索引名：idx_{表名}_{字段名}（idx_users_email）
     约束名：fk_{表名}_{引用表名}（fk_orders_users）
 
-  必备字段（每张表都要有）：
+  关系型数据库必备字段（每张表都要有）：
     id            主键，UUID 或自增 BIGINT（推荐 UUID 避免信息泄漏）
     created_at    创建时间，TIMESTAMP WITH TIME ZONE，默认 NOW()
     updated_at    更新时间，TIMESTAMP WITH TIME ZONE，默认 NOW()，触发器自动更新
@@ -31,7 +31,7 @@ description: 数据库工程能力——Schema 设计模式、索引策略、查
       合规要求必须彻底删除的个人数据（GDPR）
       大量临时数据（购物车草稿等）
 
-  数据类型选择：
+  关系型数据类型选择：
     金额     → DECIMAL(10,2)，绝对不用 FLOAT/DOUBLE（精度丢失）
     枚举状态  → VARCHAR + CHECK 约束，不用数据库 ENUM（难以迁移）
              或独立状态表（状态多且可能变化时）
@@ -42,12 +42,30 @@ description: 数据库工程能力——Schema 设计模式、索引策略、查
     手机号   → VARCHAR(20)，带格式校验约束
 
 
+📌 MongoDB 设计与调优规范
+
+  1. 文档型 Schema 设计原则：
+    - 权衡 嵌入（Embedding） vs 引用（Referencing）：
+      - 嵌入：1:1 或 1:N（且子对象数量受限，如 <100 个），高内聚，单文档读写效率极高。
+      - 引用：1:N（子对象持续增长，如订单项、系统日志）或 M:N，防止单个 BSON 文档突破 16MB 物理限制。
+    - 严格避免深度嵌套：文档嵌套层级控制在 3 层以内，越深查询及索引设计越痛苦。
+
+  2. 复合索引与最左前缀：
+    - 在创建复合索引 `db.coll.createIndex({ a: 1, b: 1, c: -1 })` 时，严格匹配查询的最左前缀原则。
+    - 组合键选择：将等值（Equality）过滤字段排在索引首位，排序（Sort）字段排在第二位，范围（Range）过滤字段排在最后。
+
+  3. 聚合管道调优（Aggregation Pipeline Tuning）：
+    - **前置过滤**：必须在 Pipeline 的最开始阶段使用 `$match`，确保尽早过滤掉不相关数据，且该 match 能高效走到索引路由，杜绝全表扫描。
+    - **精简内存**：及早使用 `$project` 剔除无关字段，降低网络和内存吞吐。
+    - **严防内存崩溃**：MongoDB 聚合管道单阶段物理内存限制为 100MB，如果处理大数据集，必须在聚合中加入 `{ allowDiskUse: true }` 选项以允许磁盘临时缓存，或者通过合理的分页与 `$limit` 规避。
+
+
 📌 索引策略
 
   什么时候加索引：
-    WHERE 条件中频繁出现的列
-    JOIN 的关联列
-    ORDER BY / GROUP BY 的列
+    WHERE / $match 条件中频繁出现的列
+    JOIN / $lookup 的关联列
+    ORDER BY / $sort 的列
     唯一性约束（UNIQUE 自动创建索引）
 
   什么时候不加索引：
@@ -95,12 +113,13 @@ description: 数据库工程能力——Schema 设计模式、索引策略、查
       方案 C：ORM 的 eager loading / preload
 
   慢查询排查流程：
-    1. 开启慢查询日志（阈值 100ms）
-    2. 用 EXPLAIN ANALYZE 查看执行计划
-    3. 看是否有 Seq Scan（全表扫描）→ 需要索引
+    1. 开启慢查询日志（SQL 阈值 100ms，MongoDB 开启 Profiler 阈值 100ms）
+    2. SQL 用 EXPLAIN ANALYZE，MongoDB 用 `explain("executionStats")` 查看执行计划
+    3. 看是否有 Seq Scan / COLLSCAN（全表扫描）→ 需要索引
     4. 看是否有 Nested Loop 且外层行数多 → 考虑 JOIN 顺序或索引
     5. 看 actual rows vs planned rows 差距大 → 统计信息过期，ANALYZE
     6. 看是否有 Sort 使用了磁盘 → work_mem 不够或加排序索引
+    7. 检查 MongoDB 执行统计中的 `totalKeysExamined` 与 `nReturned`，理想状态两者比例接近 1:1
 
   常见查询优化模式：
     避免 SELECT * → 只查需要的列
@@ -190,9 +209,9 @@ description: 数据库工程能力——Schema 设计模式、索引策略、查
 
 
 📌 数据库工程产出物清单
-  Schema DDL（含注释、约束、索引）
-  数据字典（每个表每个字段的含义和规则）
-  索引分析报告（现有索引的使用率和建议）
-  迁移脚本 + 回滚脚本
-  缓存策略文档（Key 规范、TTL、失效方式）
-  慢查询优化记录（优化前后的执行计划对比）
+  - Schema DDL / MongoDB Index Scripts（含注释、约束、索引）
+  - 数据字典（每个表每个字段的含义和规则）
+  - 索引分析报告（现有索引的使用率和建议）
+  - 迁移脚本 + 回滚脚本
+  - 缓存策略文档（Key 规范、TTL、失效方式）
+  - 慢查询解释计划优化记录对比
