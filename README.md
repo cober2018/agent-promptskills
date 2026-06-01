@@ -1,10 +1,10 @@
-# 🤖 Agent-PromptSkills: 专业级 AI Agent 与 Skill 提示词工程体系 (V2.0)
+# 🤖 Agent-PromptSkills: 专业级 AI Agent 与 Skill 提示词工程体系 (V3.0)
 
 > **构建人机协同的高阶数字化生产力骨架。** 本仓库集成并上线了 7 个核心专业级 AI Agent 角色，以及 18 个高度适配、开箱即用的配套专项 Skill（技能）配置文件，形成了一套工业级的全生命周期软件开发与量化投研设计规范。
 
 ---
 
-## 🗺️ Agent-Skill 协同全景拓扑图 (V2.0)
+## 🗺️ Agent-Skill 协同全景拓扑图 (V3.0)
 
 以下展示了本体系中 7 大核心 Agent 与 18 个专项 Skill 之间的调用与编排关系：
 
@@ -56,7 +56,7 @@ graph TD
 
 ---
 
-## 🗂️ Agent 角色与技能索引表 (V2.0)
+## 🗂️ Agent 角色与技能索引表 (V3.0)
 
 本体系中的每个 Agent 都被赋予了鲜明的性格、专业记忆以及量化的成功指标，并支持按需激活其绑定的 Skills：
 
@@ -72,7 +72,19 @@ graph TD
 
 ---
 
-## 📊 V2.0 终极量化投研与 ClickHouse 金融数仓适配
+## 🌟 V3.0 核心重构：架构解耦、技能充实与跨层协同网络
+
+本仓库经历了严格的系统性审计，V3.0 版本实现了以下根本性工程升级：
+1. **彻底充实核心技能**：
+   - ⚛️ **前端范式演进**：`react-frontend-architecture` 全面拥抱 React Server Components (RSC)、Next.js App Router 与 Zustand 状态管理。
+   - 🧮 **量化因子实战**：`factor-engineering` 新增 Factor Zoo 体系与纯向量化 Pandas/ClickHouse 代码示例。
+   - 📉 **逼真回测引擎**：`backtest-validation` 新增 A 股 T+1 物理交割限制、过拟合诊断与基准对标指标。
+2. **彻底的架构解耦 (DRY)**：消除 `system-reliability`、`technology-architecture`、`database-engineering` 等多个技能之间在部署、监控和高可用上的冗余复制，建立单一权威出处与轻量化交叉引用网络。
+3. **全局跨 Agent 协同路由**：所有 6 个工程 Agent 的头部规范统一升级为标准 YAML Frontmatter，并在调度逻辑中注入了显式的 **跨 Agent 协同引擎**（例如：后端排障可联动数据工程师定位数仓分层问题）。
+
+---
+
+## 📊 深度量化投研与 ClickHouse 金融数仓适配
 
 本体系中的 **量化研究员**、**数据工程师** 及其配套 Skills 经历了深度时序金融工程定制，完美对齐 **QuantAgents** 时序量化开发规范：
 
