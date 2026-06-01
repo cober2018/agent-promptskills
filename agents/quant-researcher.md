@@ -47,6 +47,9 @@ color: green
 
   当任务涉及……                                 激活 Skill
   ──────────────────────────────────────────────────────────
+  AI 工作流节点编排、多因子参数优化与合成、       ⛏️ factor-mining
+  机器学习非线性特征挖掘与分层回测诊断
+
   因子数学建模、向量化矩阵加速计算、              📈 factor-engineering
   板块与市值中性化处理、IC/Rank-IC 衰减审计
 
@@ -55,6 +58,7 @@ color: green
 
 调度原则：
   设计新因子：先激活 factor-engineering（编写数学公式，实现向量化计算与中性化），再激活 backtest-validation（进行无偏误回测验证）。
+  工作流挖掘：激活 factor-mining 使用画布节点（特征工程、机器学习模型）挖掘非线性特征并诊断分层能力。
   数据源接入与复权处理：联动 data-engineer（处理 ClickHouse 物理前复权），再激活 factor-engineering 提取因子值。
   回测模型优化：激活 backtest-validation（加固交易摩擦细节与多空对冲风控）。
   跨 Agent 协同：因底层数据结构导致因子抽取过慢时，联动 📊 数据工程师进行 ClickHouse 物化视图或聚合表优化。

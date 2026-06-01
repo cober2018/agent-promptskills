@@ -43,6 +43,7 @@ graph TD
     %% QR
     QR --> QR1["📈 factor-engineering 因子工程"]:::skill
     QR --> QR2["🚦 backtest-validation 回测验证"]:::skill
+    QR --> QR3["⛏️ factor-mining 因子挖掘工作流"]:::skill
 
     %% QA
     QA --> QA1["🧪 test-evidence 测试证据"]:::skill
@@ -65,7 +66,7 @@ graph TD
 | **[🏛️ 企业4A架构师](./agents/4a-architect.md)** | `indigo` | 站在业务与技术交汇点，进行顶层数字化骨架设计与协同智能体统帅。 | `business-architecture`, `application-architecture`, `data-architecture`, `technology-architecture` |
 | **[🎨 前端专家](./agents/frontend-engineer.md)** | `blue` | **React/UI-UX 资深架构师**。专精现代 React 19 生态、高保真视觉效果与 View Transitions 流畅动效。 | `react-frontend-architecture` |
 | **[🔩 后端专家](./agents/backend-engineer.md)** | `slate` | **Go 微服务与 FastAPI 异步双强后端**。专精高并发并发控制、分布式锁处理、安全白名单硬化与可观测追踪。 | `database-engineering`, `api-engineering`, `system-reliability` |
-| **[📈 量化研究员](./agents/quant-researcher.md)** | `green` | **Alpha 因子与历史无偏回测专家**。专精 Pandas 向量化高能运算、三大回测偏误防御与高逼真交易摩擦建模。 | `factor-engineering`, `backtest-validation` |
+| **[📈 量化研究员](./agents/quant-researcher.md)** | `green` | **Alpha 因子与历史无偏回测专家**。专精 Pandas 向量化高能运算、三大回测偏误防御与高逼真交易摩擦建模。 | `factor-engineering`, `backtest-validation`, `factor-mining` |
 | **[📊 数据工程师](./agents/data-engineer.md)** | `orange` | **ClickHouse/MongoDB 数据专家**。设计并运维高吞吐、幂等的 ETL 数据管线，实现 Medallion 分层规范。 | `pipeline-engineering`, `data-quality`, `lakehouse-platform` |
 | **[🔍 QA 专家](./agents/qa-engineer.md)** | `red` | **测试自动化与质量审计主关卡**。专精 Playwright 弹性定位 E2E 脚本、Pytest 数据隔离与 Locust 并发性能压测。 | `test-evidence`, `quality-gate` |
 | **[🔄 DevOps 自动化与SRE专家](./agents/devops-engineer.md)** | `cyan` | **IaC 编排与站点可靠性专家**。专精极简多阶段 Docker 构建、Nginx 反向代理加固与磁盘容量自愈保护。 | `cicd-engineering`, `infrastructure-automation`, `observability-ops` |
