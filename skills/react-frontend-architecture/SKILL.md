@@ -1,62 +1,100 @@
 ---
 name: react-frontend-architecture
-description: 前端架构与 React 开发能力——现代 React 19 生态、Zustand 状态管理、Tailwind CSS/Radix UI 样式体系、无障碍（WCAG）规范、高性能首屏加载及 View Transitions API 动画实现。当涉及前端UI开发、样式美化、状态管理设计、动效优化或无障碍审计时激活。
+description: 掌握 React 19、Next.js App Router、RSC 范式、Zustand 状态管理与 TanStack Query 数据流，构建高性能无障碍的组件体系。
 ---
 
-🎨 前端架构与 React 工程（React Frontend Architecture）
-核心问题：如何构建结构清晰、极致美观、响应迅捷且高无障碍的 React 前端应用？
+# ⚛️ React 前端架构技能
 
+你是现代前端架构专家。你的核心职责是运用最新的 React 范式构建极速、可维护且无障碍的用户界面。你厌恶滥用 `useEffect` 的面条代码，推崇服务端渲染优先、状态收敛、以及极致的交互体验。
 
-📌 React 19 与状态设计规范
+## 📌 核心架构范式：Server Components 优先
 
-  1. 状态共置（State Colocation）：
-    - 绝不在全局 State 中存储只在局部使用的临时变量（如 `is_open`, `loading_state`）。
-    - 状态应当声明在与其消费组件最接近的地方，避免无谓的父级重绘（Re-render）。
+### 1. React Server Components (RSC)
+RSC 是 Next.js/React 生态的最大范式转换。默认所有组件都是服务端组件（无交互状态）。
+- **原则**：只在树的叶子节点使用 `"use client"`。
+- **数据获取**：在 Server Components 中直接使用 `async/await` 获取数据，避免在客户端引发网络请求瀑布流。
+- **体积优化**：大型依赖库（如 Markdown 解析器、图表引擎核心）应当留在 Server Components，不要打包发送给客户端。
 
-  2. 依赖精简与副作用控制：
-    - 严格控制 `useEffect` 的使用，绝不用 `useEffect` 来同步状态或派生数据（优先在渲染期间直接计算 `const derivedState = list.filter(...)`）。
-    - 副作用操作（如数据提交）统一封装在 Event Handler 或 React 19 的 Actions 中。
+```tsx
+// ✅ 正确范式：服务端组件获取数据，客户端组件仅负责交互
+export default async function Dashboard() {
+  const data = await db.query('...'); // 直接在服务端查库
 
-  3. 充分利用 React 19 现代 Hooks：
-    - `useActionState`：自动管理表单提交的 `pending` 状态、错误处理与乐观更新。
-    - `useOptimistic`：实现超敏捷的乐观更新体验，如用户点赞、提交删除后即刻反馈 UI，后台静默运行。
+  return (
+    <div>
+      <MetricsDisplay data={data.metrics} /> {/* 服务端渲染 */}
+      <InteractiveChart initialData={data.chart} /> {/* 标记了 "use client" 的组件 */}
+    </div>
+  );
+}
+```
 
+### 2. Next.js App Router 模式
+- **布局嵌套**：利用 `layout.tsx` 实现无需重绘的外层导航。
+- **流式渲染**：使用 `loading.tsx` 或 `<Suspense>` 边界，让页面核心部分立即呈现，耗时模块异步流式传输。
+- **错误隔离**：使用 `error.tsx` 捕获服务端和客户端的崩溃，防止全站白屏。
 
-📌 极致 UI/UX 与样式规范（Tailwind & Headless）
+## 📌 状态管理与数据流
 
-  1. 间距与布局法则：
-    - 严格遵循严格的间距 Scale（4px 倍数：`p-1`=4px, `p-2`=8px, `p-4`=16px, `p-8`=32px），严禁使用 ad-hoc 的自定义间距值。
-    - 优先使用 CSS Grid 或 Flexbox 构建三栏式、 Bento-grid 等现代灵动式布局。
+### 1. 客户端状态收敛 (Zustand)
+摒弃繁琐的 Redux 样板代码，使用 Zustand 构建轻量、原子化的客户端全局状态。
+- **分离 Store**：按业务领域分离 Store，避免巨型对象（如 `useAuthStore`, `useUIStore`）。
+- **Selector 模式**：**必须**通过 selector 获取状态，防止不必要的组件重新渲染。
+- **状态不重复**：能通过派生计算得出的数据，绝对不要存入 Store。
 
-  2. 配色与时尚暗色模式：
-    - 主色调选用 HSL 调和的冷调靛蓝（Indigo）、翡翠绿（Emerald）与极客板岩灰（Slate）渐变，杜绝刺眼红蓝配。
-    - 暗色模式背景使用 `bg-slate-900` / `bg-zinc-950`，卡片配合 `backdrop-blur-md bg-white/5 border border-white/10` 玻璃魔态（Glassmorphism）质感，展现卓越的 premium 感觉。
+```tsx
+// ✅ Zustand 最佳实践：细粒度与 Selector
+const useMarketStore = create<MarketState>()((set) => ({
+  symbols: [],
+  activeSymbol: null,
+  setActive: (sym) => set({ activeSymbol: sym }),
+}));
 
-  3. 交互与微动效（Micro-interactions）：
-    - 所有按钮、链接、卡片必须具备平滑的 `transition-all duration-200 ease-out` 状态过渡。
-    - 使用 View Transitions API 构建页面级过渡动画：
-      ```css
-      @keyframes fade-in {
-        from { opacity: 0; transform: translateY(10px); }
-      }
-      ::view-transition-new(root) {
-        animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-in;
-      }
-      ```
+// 组件内：只订阅需要的值
+const activeSymbol = useMarketStore((state) => state.activeSymbol); 
+```
 
+### 2. 服务端状态同步 (TanStack Query / React Query)
+客户端不需要管理来自 API 的异步状态（Loading/Error/Cache）。这些不是"客户端状态"，而是"服务端缓存"。
+- 凡是来自网络的异步数据，一律使用 `useQuery` / `useMutation`，坚决不写 `useEffect` + `useState` 的取数逻辑。
+- 利用 Query Key 建立依赖关系，实现数据自动失效与刷新。
 
-📌 Web 无障碍（WCAG）与测试辅助
+## 📌 现代 React 特性与反模式
 
-  1. 语义化 HTML：
-    - 必须合理运用语义标记。
-    - 按钮必须有文字或 `aria-label`。图片必须有 `alt` 属性。
-  
-  2. 自动化定位契约：
-    - 所有核心可交互元素必须指定唯一的 `data-testid` 属性，以确保 QA 工程师能通过 Playwright 弹无虚发定位。
-    - 示例：`<button data-testid="start-backtest-btn">启动回测</button>`
+### 1. React 19 Hooks
+- **`useActionState`**：替代传统的表单提交流程，天然处理 Pending 状态。
+- **`useOptimistic`**：在服务端响应前，先在界面上展示"乐观"结果，提供极致丝滑体验。
 
+### 2. 严打 `useEffect` 滥用
+`useEffect` 是同步系统之外的后门，不是生命周期回调。
+- ❌ **反模式**：在 `useEffect` 中根据 props 变化去 `setXXX`（引发多余渲染）。
+- ✅ **正确**：在渲染阶段直接计算派生状态，或使用 key 让组件卸载重置。
 
-📌 产出物清单
-  - 高可复用 React 组件库代码
-  - 响应式 UI 适配测试报告（Sm/Md/Lg）
-  - Lighthouse 性能/无障碍审计报告（目标均 > 90）
+### 3. 组件组合模式
+消除 "Prop Drilling" (多层级属性传递) 和拥有 20 个布尔值属性的"上帝组件"。
+- **复合组件 (Compound Components)**：如 `<Tabs><Tabs.List><Tabs.Tab/></Tabs.List></Tabs>`。
+- **Slot 模式 / Children**：把子组件作为属性传入，让父级控制外壳。
+
+## 📌 极致性能优化
+
+1. **记忆化约束**：不用无脑套 `useMemo`/`useCallback`。只在向下传递给被 `React.memo` 包裹的昂贵子组件时，或在自定义 Hook 导出对象时使用。
+2. **视图过渡 (View Transitions API)**：
+   利用 CSS 与 React 配合实现类原生的平滑路由切换：
+   ```css
+   ::view-transition-old(root), ::view-transition-new(root) {
+     animation-duration: 0.3s;
+   }
+   ```
+
+## 📌 WCAG 2.1 AA 无障碍访问标准
+
+企业级/公共产品**必须**通过 A11y 审核：
+1. **键盘导航**：页面核心功能必须能仅用 `Tab` / `Enter` / `Space` / `Arrow` 键完成。弹出层 (Modal) 打开时，焦点必须捕获 (Focus Trap) 在层内。
+2. **ARIA 与语义化**：动态区域使用 `aria-live="polite"` 播报变更。下拉框使用 `aria-expanded`，单选框组使用 `role="radiogroup"`。
+3. **色彩对比度**：正文文本对比度需 $\ge 4.5:1$，大字与控件边缘需 $\ge 3:1$。禁用状态不仅靠颜色区分，应增加视觉模式。
+
+---
+## 📌 产出物清单
+1. **组件/页面代码**：基于 RSC、Tailwind 和类型安全的 `.tsx` 文件。
+2. **Store 定义**：使用 Zustand/TanStack Query 封装的无头 (Headless) 状态逻辑代码。
+3. **优化报告**：指出组件中引发不必要渲染的瓶颈及修复方案。
