@@ -1,12 +1,12 @@
 # Agent-PromptSkills：专业级 AI Agent 与 Skill 提示词工程体系
 
-> **构建人机协同的高阶数字化生产力骨架。** 本仓库集成 9 个核心专业级 AI Agent 角色与 24 个高度适配、开箱即用的配套 Skill 配置文件，形成工业级的全生命周期软件开发与量化投研设计规范。
+> **构建人机协同的高阶数字化生产力骨架。** 本仓库集成 9 个核心专业级 AI Agent 角色与 39 个高度适配、开箱即用的配套 Skill 配置文件，形成工业级的全生命周期软件开发与量化投研设计规范。
 
 ---
 
 ## Agent-Skill 协同全景拓扑图
 
-以下展示本体系中 9 大核心 Agent 与 24 个专项 Skill 之间的调用与编排关系：
+以下展示本体系中 9 大核心 Agent 与 39 个专项 Skill 之间的调用与编排关系：
 
 ```mermaid
 graph TD
@@ -201,6 +201,27 @@ graph TD
 | [bilibili-operation](./skills/bilibili-operation/SKILL.md) | 中长视频结构、弹幕造梗、三连引导 | 新媒体专家 |
 | [video-transcript-copywriting](./skills/video-transcript-copywriting/SKILL.md) | ASR 自动转写、视频字幕提取、文案提炼与二次加工 | 新媒体专家 |
 | [video-editing-direction](./skills/video-editing-direction/SKILL.md) | 分镜脚本、A/B-roll、BPM 卡点、画幅安全区 | 视频剪辑师 |
+
+### ⚡ Superpowers 流程与开发规范层
+
+*注：Superpowers 系列 Skill 作为通用的 AI 编程与工作流规范层，无需显式硬编码到特定 Agent，可在支持 Skill 调度的 Agent 平台（如 Claude Code、Cursor、Gemini CLI 等）作为全局过程规范加载。*
+
+| Skill | 核心能力 | 适用场景 |
+| :--- | :--- | :--- |
+| [using-superpowers](./skills/using-superpowers/SKILL.md) | 引导启动与 Skill 调度规则，开启 AI 规范化开发流程 | 所有 Agent 启动与交互时 |
+| [brainstorming](./skills/brainstorming/SKILL.md) | 苏格拉底式脑暴与需求深度剖析，预防方向性错误 | 任务立项与方案讨论前 |
+| [writing-plans](./skills/writing-plans/SKILL.md) | 编写微任务执行计划，划分文件职责与架构 | 需求设计与编码前 |
+| [executing-plans](./skills/executing-plans/SKILL.md) | 计划执行、步骤追踪与状态记录 | 编码与计划落地时 |
+| [test-driven-development](./skills/test-driven-development/SKILL.md) | 测试驱动开发 (TDD) 规范，红-绿-重构循环 | 所有业务代码编写 |
+| [systematic-debugging](./skills/systematic-debugging/SKILL.md) | 系统化调试、根因追踪与重现用例编写 | Bug 修复与异常排查 |
+| [verification-before-completion](./skills/verification-before-completion/SKILL.md) | 完成前自动化门禁与人工确认，防止带病交付 | 任务交付前 |
+| [subagent-driven-development](./skills/subagent-driven-development/SKILL.md) | 子智能体（Subagent）拆分协同研发与 Code Review | 复杂大任务拆分开发 |
+| [dispatching-parallel-agents](./skills/dispatching-parallel-agents/SKILL.md) | 并行智能体协作与并发控制 | 大规模任务并发处理 |
+| [requesting-code-review](./skills/requesting-code-review/SKILL.md) | 发起代码审查、PR 规范化自检 | 提交流水线前 |
+| [receiving-code-review](./skills/receiving-code-review/SKILL.md) | 接收与响应代码审查反馈，执行闭环重构 | 接收 Review 意见时 |
+| [using-git-worktrees](./skills/using-git-worktrees/SKILL.md) | 使用 Git Worktree 独立开发，保持主工作区干净 | 多任务并行、分支隔离 |
+| [finishing-a-development-branch](./skills/finishing-a-development-branch/SKILL.md) | 研发分支合并、测试用例回归与临时分支清理 | 功能开发合并时 |
+| [writing-skills](./skills/writing-skills/SKILL.md) | 编写与迭代 AI Agent 专项 Skill 的最佳实践 | 自定义 Skill 扩充 |
 
 ---
 
