@@ -1,144 +1,253 @@
-# 🤖 Agent-PromptSkills: 专业级 AI Agent 与 Skill 提示词工程体系 (V3.0)
+# Agent-PromptSkills：专业级 AI Agent 与 Skill 提示词工程体系
 
-> **构建人机协同的高阶数字化生产力骨架。** 本仓库集成并上线了 7 个核心专业级 AI Agent 角色，以及 18 个高度适配、开箱即用的配套专项 Skill（技能）配置文件，形成了一套工业级的全生命周期软件开发与量化投研设计规范。
+> **构建人机协同的高阶数字化生产力骨架。** 本仓库集成 9 个核心专业级 AI Agent 角色与 24 个高度适配、开箱即用的配套 Skill 配置文件，形成工业级的全生命周期软件开发与量化投研设计规范。
 
 ---
 
-## 🗺️ Agent-Skill 协同全景拓扑图 (V3.0)
+## Agent-Skill 协同全景拓扑图
 
-以下展示了本体系中 7 大核心 Agent 与 18 个专项 Skill 之间的调用与编排关系：
+以下展示本体系中 9 大核心 Agent 与 24 个专项 Skill 之间的调用与编排关系：
 
 ```mermaid
 graph TD
     classDef agent fill:#eef2ff,stroke:#4f46e5,stroke-width:2px;
     classDef skill fill:#f0fdf4,stroke:#16a34a,stroke-width:1px;
-    
-    CTO["🏛️ 企业4A架构师 (CTO)"]:::agent
+
+    CTO["🏛️ 4A 架构师"]:::agent
     FE["🎨 前端专家"]:::agent
     BE["🔩 后端专家"]:::agent
     DE["📊 数据工程师"]:::agent
     QR["📈 量化研究员"]:::agent
     QA["🔍 QA 专家"]:::agent
-    DO["🔄 DevOps 自动化与SRE专家"]:::agent
+    DO["🔄 DevOps / SRE 专家"]:::agent
     NM["📱 新媒体运营专家"]:::agent
     VC["🎬 视频剪辑指导师"]:::agent
 
-    %% CTO
-    CTO --> SA1["🏢 business-architecture 业务架构"]:::skill
-    CTO --> SA2["📱 application-architecture 应用架构"]:::skill
-    CTO --> SA3["💾 data-architecture 数据架构"]:::skill
-    CTO --> SA4["⚙️ technology-architecture 技术架构"]:::skill
+    %% 4A 架构师
+    CTO --> BA["🏢 business-architecture 业务架构"]:::skill
+    CTO --> AA["📱 application-architecture 应用架构"]:::skill
+    CTO --> DA["💾 data-architecture 数据架构"]:::skill
+    CTO --> TA["⚙️ technology-architecture 技术架构"]:::skill
 
-    %% FE
-    FE --> FE1["🎨 react-frontend-architecture 前端架构"]:::skill
+    %% 前端专家
+    FE --> RFA["⚛️ react-frontend-architecture 前端架构"]:::skill
 
-    %% BE
-    BE --> BE1["💾 database-engineering 数据库工程"]:::skill
-    BE --> BE2["🔌 api-engineering API 工程"]:::skill
-    BE --> BE3["🛡️ system-reliability 系统可靠性"]:::skill
+    %% 后端专家
+    BE --> DBE["💾 database-engineering 数据库工程"]:::skill
+    BE --> APE["🔌 api-engineering API 工程"]:::skill
+    BE --> SRE["🛡️ system-reliability 系统可靠性"]:::skill
 
-    %% DE
-    DE --> DE1["🔧 pipeline-engineering 管线工程"]:::skill
-    DE --> DE2["✅ data-quality 数据质量"]:::skill
-    DE --> DE3["🏗️ lakehouse-platform 数仓平台"]:::skill
+    %% 数据工程师
+    DE --> PE["🔧 pipeline-engineering 管线工程"]:::skill
+    DE --> DQ["✅ data-quality 数据质量"]:::skill
+    DE --> LP["🏗️ lakehouse-platform 数仓平台"]:::skill
 
-    %% QR
-    QR --> QR1["📈 factor-engineering 因子工程"]:::skill
-    QR --> QR2["🚦 backtest-validation 回测验证"]:::skill
-    QR --> QR3["⛏️ factor-mining 因子挖掘工作流"]:::skill
+    %% 量化研究员
+    QR --> FE_SK["📈 factor-engineering 因子工程"]:::skill
+    QR --> BV["🚦 backtest-validation 回测验证"]:::skill
+    QR --> FM["⛏️ factor-mining 因子挖掘工作流"]:::skill
 
-    %% QA
-    QA --> QA1["🧪 test-evidence 测试证据"]:::skill
-    QA --> QA2["🚦 quality-gate 质量门禁"]:::skill
+    %% QA 专家
+    QA --> TE["🧪 test-evidence 测试证据"]:::skill
+    QA --> QG["🚦 quality-gate 质量门禁"]:::skill
 
-    %% DO
-    DO --> DO1["🚀 cicd-engineering CI/CD 工程"]:::skill
-    DO --> DO2["🏗️ infrastructure-automation 基础设施自动化"]:::skill
-    DO --> DO3["📡 observability-ops 可观测性运维"]:::skill
+    %% DevOps / SRE 专家
+    DO --> CI["🚀 cicd-engineering CI/CD 工程"]:::skill
+    DO --> IA["🏗️ infrastructure-automation 基础设施自动化"]:::skill
+    DO --> OO["📡 observability-ops 可观测性运维"]:::skill
 
-    %% NM
-    NM --> NM1["🗞️ news-gathering 每日新闻收集"]:::skill
-    NM --> NM2["📕 xhs-operation 小红书运营"]:::skill
-    NM --> NM3["🎵 douyin-tiktok-operation 抖音/TikTok运营"]:::skill
-    NM --> NM4["🟩 wechat-operation 微信公众号运营"]:::skill
-    NM --> NM5["📺 bilibili-operation B站运营"]:::skill
+    %% 新媒体运营专家
+    NM --> NG["🗞️ news-gathering 新闻采集与洞察"]:::skill
+    NM --> XHS["📕 xhs-operation 小红书运营"]:::skill
+    NM --> DYT["🎵 douyin-tiktok-operation 抖音/TikTok 运营"]:::skill
+    NM --> WX["🟩 wechat-operation 微信公众号运营"]:::skill
+    NM --> BILI["📺 bilibili-operation B 站运营"]:::skill
+    NM --> ASR["📝 video-transcript-copywriting 视频字幕与文案加工"]:::skill
 
-    %% VC
-    VC --> VC1["✂️ video-editing-direction 剪辑与视听指导"]:::skill
+    %% 视频剪辑指导师
+    VC --> VED["✂️ video-editing-direction 剪辑与视听指导"]:::skill
 ```
 
 ---
 
-## 🗂️ Agent 角色与技能索引表 (V3.0)
+## Agent 角色索引表
 
-本体系中的每个 Agent 都被赋予了鲜明的性格、专业记忆以及量化的成功指标，并支持按需激活其绑定的 Skills：
-
-| Agent 角色 | 视觉主题 | 核心职责与使命 | 绑定的专项 Skills (技能) |
-| :--- | :---: | :--- | :--- |
-| **[🏛️ 企业4A架构师](./agents/4a-architect.md)** | `indigo` | 站在业务与技术交汇点，进行顶层数字化骨架设计与协同智能体统帅。 | `business-architecture`, `application-architecture`, `data-architecture`, `technology-architecture` |
-| **[🎨 前端专家](./agents/frontend-engineer.md)** | `blue` | **React/UI-UX 资深架构师**。专精现代 React 19 生态、高保真视觉效果与 View Transitions 流畅动效。 | `react-frontend-architecture` |
-| **[🔩 后端专家](./agents/backend-engineer.md)** | `slate` | **Go 微服务与 FastAPI 异步双强后端**。专精高并发并发控制、分布式锁处理、安全白名单硬化与可观测追踪。 | `database-engineering`, `api-engineering`, `system-reliability` |
-| **[📈 量化研究员](./agents/quant-researcher.md)** | `green` | **Alpha 因子与历史无偏回测专家**。专精 Pandas 向量化高能运算、三大回测偏误防御与高逼真交易摩擦建模。 | `factor-engineering`, `backtest-validation`, `factor-mining` |
-| **[📊 数据工程师](./agents/data-engineer.md)** | `orange` | **ClickHouse/MongoDB 数据专家**。设计并运维高吞吐、幂等的 ETL 数据管线，实现 Medallion 分层规范。 | `pipeline-engineering`, `data-quality`, `lakehouse-platform` |
-| **[🔍 QA 专家](./agents/qa-engineer.md)** | `red` | **测试自动化与质量审计主关卡**。专精 Playwright 弹性定位 E2E 脚本、Pytest 数据隔离与 Locust 并发性能压测。 | `test-evidence`, `quality-gate` |
-| **[🔄 DevOps 自动化与SRE专家](./agents/devops-engineer.md)** | `cyan` | **IaC 编排与站点可靠性专家**。专精极简多阶段 Docker 构建、Nginx 反向代理加固与磁盘容量自愈保护。 | `cicd-engineering`, `infrastructure-automation`, `observability-ops` |
-| **[📱 新媒体运营专家](./agents/new-media-operator.md)** | `pink` | **全栈新媒体运营与内容营销专家**。精通全平台流量密码、爆款文案策划、热点网感捕捉与差异化分发。 | `news-gathering`, `xhs-operation`, `douyin-tiktok-operation`, `wechat-operation`, `bilibili-operation` |
-| **[🎬 视频剪辑指导师](./agents/video-editing-coach.md)** | `purple` | **资深影视后期与视听语言导演**。专精短/中长视频分镜脚本、BPM 音乐卡点与完播率视觉特效优化。 | `video-editing-direction` |
+| Agent 角色 | 核心职责与使命 | 绑定的专项 Skill |
+| :--- | :--- | :--- |
+| **[🏛️ 4A 架构师](./agents/4a-architect.md)** | 站在业务与技术交汇点，进行顶层数字化骨架设计与协同智能体统帅 | `business-architecture`, `application-architecture`, `data-architecture`, `technology-architecture` |
+| **[🎨 前端专家](./agents/frontend-engineer.md)** | React / UI-UX 资深架构师，专精 React 19 生态、高保真视觉效果与 View Transitions 流畅动效 | `react-frontend-architecture` |
+| **[🔩 后端专家](./agents/backend-engineer.md)** | Go 微服务与 FastAPI 异步双强后端，专精高并发控制、分布式锁、可观测追踪 | `database-engineering`, `api-engineering`, `system-reliability` |
+| **[📈 量化研究员](./agents/quant-researcher.md)** | Alpha 因子与历史无偏回测专家，专精 Pandas 向量化运算、回测偏误防御、交易摩擦建模 | `factor-engineering`, `backtest-validation`, `factor-mining` |
+| **[📊 数据工程师](./agents/data-engineer.md)** | ClickHouse / MongoDB 数据专家，设计运维高吞吐、幂等的 ETL 管线，实现 Medallion 分层 | `pipeline-engineering`, `data-quality`, `lakehouse-platform` |
+| **[🔍 QA 专家](./agents/qa-engineer.md)** | 测试自动化与质量审计主关卡，专精 Playwright E2E、Pytest 数据隔离、Locust 性能压测 | `test-evidence`, `quality-gate` |
+| **[🔄 DevOps / SRE 专家](./agents/devops-engineer.md)** | IaC 编排与站点可靠性专家，专精极简多阶段 Docker、Nginx 加固、磁盘容量自愈 | `cicd-engineering`, `infrastructure-automation`, `observability-ops` |
+| **[📱 新媒体运营专家](./agents/new-media-operator.md)** | 全栈新媒体运营与内容营销专家，精通全平台流量密码、爆款文案、热点网感捕捉 | `news-gathering`, `xhs-operation`, `douyin-tiktok-operation`, `wechat-operation`, `bilibili-operation`, `video-transcript-copywriting` |
+| **[🎬 视频剪辑指导师](./agents/video-editing-coach.md)** | 资深影视后期与视听语言导演，专精分镜脚本、BPM 卡点、完播率视觉优化 | `video-editing-direction` |
 
 ---
 
-## 🌟 V3.0 核心重构：架构解耦、技能充实与跨层协同网络
+## 文档格式规范（V2.0）
 
-本仓库经历了严格的系统性审计，V3.0 版本实现了以下根本性工程升级：
-1. **彻底充实核心技能**：
-   - ⚛️ **前端范式演进**：`react-frontend-architecture` 全面拥抱 React Server Components (RSC)、Next.js App Router 与 Zustand 状态管理。
-   - 🧮 **量化因子实战**：`factor-engineering` 新增 Factor Zoo 体系与纯向量化 Pandas/ClickHouse 代码示例。
-   - 📉 **逼真回测引擎**：`backtest-validation` 新增 A 股 T+1 物理交割限制、过拟合诊断与基准对标指标。
-2. **彻底的架构解耦 (DRY)**：消除 `system-reliability`、`technology-architecture`、`database-engineering` 等多个技能之间在部署、监控和高可用上的冗余复制，建立单一权威出处与轻量化交叉引用网络。
-3. **全局跨 Agent 协同路由**：所有 6 个工程 Agent 的头部规范统一升级为标准 YAML Frontmatter，并在调度逻辑中注入了显式的 **跨 Agent 协同引擎**（例如：后端排障可联动数据工程师定位数仓分层问题）。
+本仓库 V2.0 全面升级为 **Audience-Based Language Strategy**（受众分层语言策略），所有 Agent 与 Skill 文件遵循统一的 Markdown 结构与语言分层。
+
+### 1. 受众分层语言原则
+
+| 层级 | 受众 | 语言策略 |
+| :--- | :--- | :--- |
+| **YAML description** | Claude 模型（路由决策） | 中文短句，使用「用于以下场景：」+ 触发关键词，控制在 500 字符内 |
+| **Markdown 正文** | 人类开发者 + Claude 模型（执行） | 中文叙述 + 英文技术术语（如 ReplacingMergeTree、`partition by`、IC、IR） |
+| **代码块** | 运行时（Python / SQL / Go / Nginx） | 纯英文代码，技术词与变量名保持英文 |
+
+**核心理念：**
+
+- **description 只描述触发条件，不总结工作流**——避免 Claude 走捷径跳过正文。
+- **正文用中文解释"为什么"，用英文保留"是什么"**——技术名词的精确性高于翻译流畅性。
+- **代码与配置保持英文**——避免运行时解析错误。
+
+### 2. 文件结构（V2.0 标准模板）
+
+**Agent 文件结构：**
+
+```text
+1. YAML frontmatter（name + description）
+2. 身份与定位（Identity）
+3. 核心使命（Core Mission）
+4. 何时调度（When to Dispatch）
+5. 关键规则（Key Rules）
+6. 技能路由（Skill Routing）
+7. 工程约束（Engineering Constraints）
+8. 代码审查清单（Code Review Checklist）
+9. 成功指标（Success Metrics）
+10. 沟通风格（Communication Style）
+```
+
+**Skill 文件结构：**
+
+```text
+1. YAML frontmatter（name + description）
+2. 概述（Overview）
+3. 何时使用（When to Use）
+4. 速查表（Quick Reference）
+5. 核心规则（Core Rules）
+6. 常见错误（Common Mistakes）
+7. 产出物清单（Deliverables Checklist）
+```
+
+### 3. 表格优先原则
+
+**V2.0 强约束：** 所有对比、清单、矩阵、参数选项必须使用 Markdown 表格，禁止使用嵌套项目符号或大段文字罗列。
+
+| 替代 | 说明 |
+| :--- | :--- |
+| ❌ 多层缩进项目符号对比 | 嵌套超过 2 层即丢失可扫描性 |
+| ✅ 表格 | 一眼扫读，便于 Claude 与人类共同解析 |
 
 ---
 
-## 📊 深度量化投研与 ClickHouse 金融数仓适配
+## Skill 体系完整索引
 
-本体系中的 **量化研究员**、**数据工程师** 及其配套 Skills 经历了深度时序金融工程定制，完美对齐 **QuantAgents** 时序量化开发规范：
+### 🏛️ 架构层
+
+| Skill | 核心能力 | 主调度 Agent |
+| :--- | :--- | :--- |
+| [business-architecture](./skills/business-architecture/SKILL.md) | 业务架构、能力分层、价值流、康威定律 | 4A 架构师 |
+| [application-architecture](./skills/application-architecture/SKILL.md) | DDD、CQRS、BFF、Strangler Fig、ADR | 4A 架构师 |
+| [data-architecture](./skills/data-architecture/SKILL.md) | Medallion 分层、五大存储选型、数据契约 | 4A 架构师 |
+| [technology-architecture](./skills/technology-architecture/SKILL.md) | SLI/SLO/SLA、容量规划、弹性设计、反模式 | 4A 架构师 |
+
+### 💻 工程层
+
+| Skill | 核心能力 | 主调度 Agent |
+| :--- | :--- | :--- |
+| [react-frontend-architecture](./skills/react-frontend-architecture/SKILL.md) | React 19 RSC、Zustand、TanStack Query、WCAG | 前端专家 |
+| [api-engineering](./skills/api-engineering/SKILL.md) | REST/GraphQL/gRPC 设计、版本管理、契约 | 后端专家 |
+| [database-engineering](./skills/database-engineering/SKILL.md) | Schema 索引、查询优化、零停机迁移、缓存 | 后端专家 |
+| [system-reliability](./skills/system-reliability/SKILL.md) | Go 并发、Redis 锁、安全加固、负载测试 | 后端专家 |
+
+### 📊 数据层
+
+| Skill | 核心能力 | 主调度 Agent |
+| :--- | :--- | :--- |
+| [pipeline-engineering](./skills/pipeline-engineering/SKILL.md) | 采集脚本、ODS→DWD→DWS→ADS、幂等写入 | 数据工程师 |
+| [data-quality](./skills/data-quality/SKILL.md) | 数据契约、五大维度、三级门禁、告警分级 | 数据工程师 |
+| [lakehouse-platform](./skills/lakehouse-platform/SKILL.md) | ClickHouse 引擎选型、分区索引、冷热分离 | 数据工程师 |
+
+### 📈 量化层
+
+| Skill | 核心能力 | 主调度 Agent |
+| :--- | :--- | :--- |
+| [factor-engineering](./skills/factor-engineering/SKILL.md) | 因子分类、向量化、MAD 去极值、IC 评估 | 量化研究员 |
+| [factor-mining](./skills/factor-mining/SKILL.md) | AI 节点工作流、ML 非线性特征、复合因子 | 量化研究员 |
+| [backtest-validation](./skills/backtest-validation/SKILL.md) | A 股 T+1、涨跌停、四大偏误、滑点建模 | 量化研究员 |
+
+### 🛡️ 质量与运维层
+
+| Skill | 核心能力 | 主调度 Agent |
+| :--- | :--- | :--- |
+| [test-evidence](./skills/test-evidence/SKILL.md) | Playwright E2E、Pytest 隔离、Bug 报告 | QA 专家 |
+| [quality-gate](./skills/quality-gate/SKILL.md) | Locust 压测门禁、E2E 验证、A/B/C/D 评级 | QA 专家 |
+| [cicd-engineering](./skills/cicd-engineering/SKILL.md) | 蓝绿 / 金丝雀、灰度发布、回滚方案 | DevOps 专家 |
+| [infrastructure-automation](./skills/infrastructure-automation/SKILL.md) | Docker Distroless、Terraform、K8s 探针 | DevOps 专家 |
+| [observability-ops](./skills/observability-ops/SKILL.md) | Nginx 加固、SRE 日志滚动、告警 Runbook | DevOps 专家 |
+
+### 📱 新媒体层
+
+| Skill | 核心能力 | 主调度 Agent |
+| :--- | :--- | :--- |
+| [news-gathering](./skills/news-gathering/SKILL.md) | 热点捕捉、行业聚合、情绪提炼、晨报 | 新媒体专家 |
+| [xhs-operation](./skills/xhs-operation/SKILL.md) | 小红书爆款公式、SEO 埋词、Tag 策略 | 新媒体专家 |
+| [douyin-tiktok-operation](./skills/douyin-tiktok-operation/SKILL.md) | 黄金 3 秒钩子、算法漏斗、BGM 卡点 | 新媒体专家 |
+| [wechat-operation](./skills/wechat-operation/SKILL.md) | 长图文、私域沉淀、社交货币、裂变诱饵 | 新媒体专家 |
+| [bilibili-operation](./skills/bilibili-operation/SKILL.md) | 中长视频结构、弹幕造梗、三连引导 | 新媒体专家 |
+| [video-transcript-copywriting](./skills/video-transcript-copywriting/SKILL.md) | ASR 自动转写、视频字幕提取、文案提炼与二次加工 | 新媒体专家 |
+| [video-editing-direction](./skills/video-editing-direction/SKILL.md) | 分镜脚本、A/B-roll、BPM 卡点、画幅安全区 | 视频剪辑师 |
+
+---
+
+## 深度量化投研与 ClickHouse 金融数仓适配
+
+本体系中的 **量化研究员**、**数据工程师** 及其配套 Skills 经历了深度时序金融工程定制，对齐 **QuantAgents** 时序量化开发规范：
 
 ### 1. 阿尔法因子与历史无偏回测规范
-*   **向量化矩阵运算**：严格杜绝 `for` 循环遍历 Panel 时序矩阵，全面推行 Pandas MultiIndex 向量化运算。
-*   **严防回测三大偏误**：
-    *   **未来函数（Lookahead Bias）**：严格进行时序平移 `.shift(1)`，确保交易信号完全基于历史数据。
-    -   **幸存者偏差（Survivorship Bias）**：回测股票池动态加载，无缝兼容历史已退市股票。
-    -   **公告日延迟（Announcement Delay）**：财务因子计算严格对接实际公告发布日（Announcement Date）而非季报结算日。
-*   **高仿真交易摩擦**：内置 A 股标准印花税/佣金扣减标准，嵌入成交量上限 10% 流动性约束及滑点偏离算法。
+
+| 规范 | 实施细节 |
+| :--- | :--- |
+| **向量化矩阵运算** | 严格杜绝 `for` 循环遍历 Panel 时序矩阵，全面推行 Pandas MultiIndex 向量化运算 |
+| **未来函数（Lookahead Bias）防御** | 严格进行时序平移 `.shift(1)`，确保交易信号完全基于历史数据 |
+| **幸存者偏差（Survivorship Bias）防御** | 回测股票池动态加载，无缝兼容历史已退市股票 |
+| **公告日延迟（Announcement Delay）防御** | 财务因子计算严格对接实际公告发布日（Announcement Date）而非季报结算日 |
+| **高仿真交易摩擦** | 内置 A 股标准印花税 / 佣金扣减标准，嵌入成交量上限 10% 流动性约束及滑点偏离算法 |
 
 ### 2. ClickHouse 与 MongoDB 混合湖仓调优
-*   **Medallion 四级数仓分层**：清晰划分 `ODS`（原始不可变） $\rightarrow$ `DWD`（清洗标准化，前复权物理表） $\rightarrow$ `DWS`（主题多维聚合，日/分钟 K 线） $\rightarrow$ `ADS`（策略因子与信号）四层。
-*   **ClickHouse 时序表调优**：
-    - 主推 `ReplacingMergeTree` + `ORDER BY` + `updated_at` 组合实现写入即去重和 Exactly-Once 语义。
-    - 时序数据合理设置分区键（如 `toYYYYMM(trade_date)`）与冷热数据存储分离，提升千万级分钟 K 线查询效率。
-*   **MongoDB 复合聚合管道调优**：
-    - 聚合查询必须前置 `$match` 并走到复合索引路由，及早 `$project` 剔除无用列。
-    - 强制配置磁盘临时使用 `{ allowDiskUse: true }`，防止 Pipeline 聚合处理时突破 100MB 物理内存上限。
-*   **Redis Tick 时序流**：
-    - 使用 Sorted Sets 存储毫秒级 Tick 更新（以时间戳为 score），支持滑动窗口低延迟读取。
+
+| 维度 | 实施细节 |
+| :--- | :--- |
+| **Medallion 四级数仓分层** | 清晰划分 ODS（原始不可变）→ DWD（清洗标准化，前复权物理表）→ DWS（主题多维聚合，日/分钟 K 线）→ ADS（策略因子与信号）四层 |
+| **ClickHouse 时序表调优** | 主推 `ReplacingMergeTree` + `ORDER BY` + `updated_at` 组合实现写入即去重和 Exactly-Once 语义；时序数据合理设置分区键（如 `toYYYYMM(trade_date)`）与冷热数据存储分离 |
+| **MongoDB 复合聚合管道调优** | 聚合查询必须前置 `$match` 并走到复合索引路由，及早 `$project` 剔除无用列；强制配置 `{ allowDiskUse: true }` |
+| **Redis Tick 时序流** | 使用 Sorted Sets 存储毫秒级 Tick 更新（以时间戳为 score），支持滑动窗口低延迟读取 |
 
 ---
 
-## 🛠️ 如何在您的开发工具中使用
+## 如何在开发工具中使用
 
-这套体系在主流的 AI 辅助开发工具（如 Cline, Windsurf, Cursor, Antigravity 等）中皆可展现出卓越效能。
+这套体系在主流的 AI 辅助开发工具（Cline / Windsurf / Cursor / Antigravity 等）中皆可展现出卓越效能。
 
-### 1. 作为 Skill（技能）动态载入 (以 Antigravity/Cline 为例)
-*   每个 Skill 文件夹均包含一个 `SKILL.md` 文件，其头部定义了标准的 YAML 声明：
-    ```yaml
-    ---
-    name: api-engineering
-    description: API 工程能力——REST/GraphQL/gRPC 接口设计与实现...
-    ---
-    ```
-*   当系统识别到任务触发词（如“计算阿尔法因子”、“优化 MongoDB 聚合”、“设计 Docker 镜像”）时，AI 将自动调度并激活对应的专项 Skill。
+### 1. 作为 Skill 动态载入（以 Antigravity / Cline 为例）
 
-### 2. 作为全局规则载入 (以 Cursor `.cursorrules` / `.windsurfrules` 为例)
+每个 Skill 文件夹均包含一个 `SKILL.md` 文件，其头部定义了标准的 YAML 声明：
+
+```yaml
+---
+name: api-engineering
+description: 用于以下场景：API 工程设计——REST/GraphQL/gRPC 接口设计、版本管理、契约测试...
+---
+```
+
+当系统识别到任务触发词（如"计算阿尔法因子"、"优化 MongoDB 聚合"、"设计 Docker 镜像"）时，AI 将自动调度并激活对应的专项 Skill。
+
+### 2. 作为全局规则载入（以 Cursor `.cursorrules` / `.windsurfrules` 为例）
+
 您可以直接将对应 Agent 提示词文件（如 `agents/backend-engineer.md`）中的内容复制到您项目的全局配置规则中。
 
 ---

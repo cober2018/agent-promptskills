@@ -1,284 +1,158 @@
 ---
-name: api-engineering
-description: API 工程能力——REST/GraphQL/gRPC 接口设计与实现、中间件模式、错误处理、认证授权、请求校验、WebSocket 实时推送、API 版本管理。扩展支持 Python FastAPI 异步 API 设计模式与 gRPC/Protobuf 内部微服务高效通信规范。
+name: 接口工程
+description: 用于以下场景：设计、实现或审查 HTTP/REST/gRPC/GraphQL 接口——涉及路由规范、响应信封、HTTP 状态码、请求校验、错误处理、中间件链路、认证（JWT/OAuth/API Key）以及 WebSocket 实时推送。
 ---
 
-🔌 API 工程（API Engineering）
-核心问题：接口怎么设计？怎么实现得健壮？怎么保证安全？
+# 接口工程
 
+## 概述
 
-📌 API 设计规范
+如何设计并实现健壮、安全、可版本化的 API。**接口即契约——破坏一次，长期买单。**
 
-  RESTful 设计约定：
-    URL 用名词复数，不用动词：
-      ✅ GET /api/v1/users         获取用户列表
-      ✅ GET /api/v1/users/123     获取单个用户
-      ✅ POST /api/v1/users        创建用户
-      ✅ PUT /api/v1/users/123     全量更新用户
-      ✅ PATCH /api/v1/users/123   部分更新用户
-      ✅ DELETE /api/v1/users/123  删除用户
-      ❌ POST /api/v1/createUser
-      ❌ GET /api/v1/getUserById
+## 何时使用
 
-    嵌套资源（表达从属关系）：
-      GET /api/v1/users/123/orders         用户 123 的订单列表
-      GET /api/v1/users/123/orders/456     用户 123 的订单 456
-      嵌套不超过 2 层，更深的用查询参数或独立端点
+- 新增端点、Controller 或 RPC 方法
+- 为新功能设计 URL / 路由 / 契约
+- 审查接口变更（状态码、错误信封、认证、校验）
+- 在 REST / GraphQL / gRPC 之间做技术选型
+- 增加中间件、认证、限流、WebSocket
+- 排查「为什么返回 4xx / 5xx」
 
-    查询参数约定：
-      分页：?page=1&page_size=20  或  ?cursor=xxx&limit=20（推荐游标分页）
-      排序：?sort=created_at&order=desc
-      过滤：?status=active&category=electronics
-      字段选择：?fields=id,name,price（减少传输量）
+**不要用于：** 内部数据加工（→ `data-engineering`）、数据库 Schema 工作（→ `database-engineering`）。
 
-  通用响应格式：
-    成功响应：
-      {
-        "data": { ... },               单个对象或数组
-        "meta": {
-          "timestamp": "...",           响应时间
-          "request_id": "...",          请求追踪 ID
-          "pagination": {               仅列表接口
-            "total": 1000,
-            "page": 1,
-            "page_size": 20,
-            "has_next": true
-          }
-        }
-      }
+## 速查表
 
-    错误响应：
-      {
-        "error": {
-          "code": "VALIDATION_ERROR",   机器可读的错误码
-          "message": "邮箱格式不正确",    人类可读的消息
-          "details": [                   具体的校验错误（可选）
-            { "field": "email", "reason": "格式不正确" }
-          ]
-        },
-        "meta": {
-          "timestamp": "...",
-          "request_id": "..."
-        }
-      }
+### URL 规范
 
-  HTTP 状态码使用规范：
-    200 OK              → 成功（GET、PUT、PATCH、DELETE）
-    201 Created         → 创建成功（POST）
-    204 No Content      → 成功但无返回体（DELETE）
-    400 Bad Request     → 请求参数错误、校验失败
-    401 Unauthorized    → 未认证（没有 Token 或 Token 无效）
-    403 Forbidden       → 已认证但无权限
-    404 Not Found       → 资源不存在
-    409 Conflict        → 资源冲突（重复创建、并发修改）
-    422 Unprocessable   → 语法正确但语义错误（业务规则不允许）
-    429 Too Many Reqs   → 触发限流
-    500 Internal Error  → 服务器内部错误（绝不暴露细节）
-    503 Service Unavail → 服务暂时不可用（维护、过载）
+| 方法 | 模式 | 用途 |
+|---|---|---|
+| GET    | `/api/v1/{resource}`        | 列表 |
+| GET    | `/api/v1/{resource}/{id}`   | 详情 |
+| POST   | `/api/v1/{resource}`        | 创建 |
+| PUT    | `/api/v1/{resource}/{id}`   | 全量替换 |
+| PATCH  | `/api/v1/{resource}/{id}`   | 部分更新 |
+| DELETE | `/api/v1/{resource}/{id}`   | 删除 |
 
+- 名词复数、禁用动词。嵌套 ≤ 2 层，更深用查询参数。
+- 分页：优先 `?cursor=...&limit=20`，避免 `?page=1&page_size=20`。
 
-📌 Python FastAPI 异步设计规范
+### 响应信封
 
-  1. FastAPI 依赖注入系统（Dependency Injection）：
-    - 统一使用 `Depends` 声明数据库 Session 生命周期、Redis 连接获取、JWT 鉴权拦截以及当前登录用户解析。
-    - 示例：
-      ```python
-      @app.get("/api/v1/factors")
-      async def get_factors(
-          db: AsyncSession = Depends(get_db_session),
-          current_user: User = Depends(get_current_active_user)
-      ):
-          ...
-      ```
+```json
+// 成功
+{ "data": { ... },
+  "meta": { "timestamp": "...", "request_id": "...",
+             "pagination": { "total": 1000, "page": 1, "page_size": 20, "has_next": true } } }
 
-  2. 严格使用 Pydantic 契约校验：
-    - 入参使用 `BaseModel`（Pydantic）接收，强制配置 `extra = "forbid"` 以绝对禁止客户端提交未经声明的杂质字段。
-    - 充分利用 Pydantic 强大的 Field 校验（如 `Field(gt=0, description="因子阈值")`），在路由入口处自动阻断非法输入。
+// 失败
+{ "error": { "code": "VALIDATION_ERROR", "message": "...", "details": [...] },
+  "meta": { "timestamp": "...", "request_id": "..." } }
+```
 
+### HTTP 状态码速查
 
-📌 gRPC 与 Protobuf 内部微服务通信
+| 状态码 | 用途 |
+|---|---|
+| 200  | OK（GET / PUT / PATCH / DELETE） |
+| 201  | Created（POST） |
+| 204  | No Content（DELETE） |
+| 400  | 参数校验失败 |
+| 401  | 未认证 / Token 无效 |
+| 403  | 已认证但无权限 |
+| 404  | 资源不存在 |
+| 409  | 冲突（重复、并发编辑） |
+| 422  | 语法正确但语义不合法 |
+| 429  | 触发限流（响应头 `Retry-After`） |
+| 500  | 服务器错误——**严禁暴露细节** |
+| 503  | 维护 / 过载 |
 
-  1. 严格契约优先（Contract First）：
-    - 内部微服务（如量化引擎、回测系统、主数据服务）调用一律禁止使用 HTTP REST，全面推崇 gRPC 协议。
-    - 服务及参数必须在 `.proto` 文件中清晰、严格地定义。
-    - 示例：
-      ```protobuf
-      service BacktestService {
-          rpc StartBacktest (BacktestRequest) returns (BacktestResponse);
-      }
-      ```
+## 核心规则
 
-  2. 错误码对齐规范：
-    - gRPC 的错误返回必须通过标准的 `status` 响应码透传给网关（Nginx 或 API 网关）。
-    - 对应关系：
-      - `codes.InvalidArgument` $\rightarrow$ HTTP 400 Bad Request
-      - `codes.Unauthenticated` $\rightarrow$ HTTP 401 Unauthorized
-      - `codes.PermissionDenied` $\rightarrow$ HTTP 403 Forbidden
-      - `codes.NotFound` $\rightarrow$ HTTP 404 Not Found
-      - `codes.Internal` $\rightarrow$ HTTP 500 Internal Server Error
+1. **在边界处校验。** 路由层用 Pydantic / Go validator 白名单校验、拒绝多余字段；Service 与 Repository 不再做校验。
+2. **透传 `traceId`。** 入口处生成或继承，下沉到所有日志、下游调用、异步任务；响应头回写 `X-Request-Id`。
+3. **gRPC status → HTTP 状态码** 在网关层映射：`codes.NotFound` → 404、`codes.PermissionDenied` → 403 等（完整映射见 `grpc-patterns.md`）。
+4. **认证 ≠ 授权。** JWT 解决「你是谁」，还要检查资源级归属（如 `article.author_id == user.id`）。
+5. **500 永远不暴露细节。** 堆栈进日志，客户端只见通用消息 + `request_id`。
 
+## 协议选型
 
-📌 协议选型
+| 协议 | 适用 | 避免 |
+|---|---|---|
+| **REST** | 对外 API、CRUD、前后端联调 | 需要灵活查询形态 |
+| **GraphQL** | BFF 层、多端差异化查询 | 直接对外暴露（安全 + 缓存成本） |
+| **gRPC** | 服务间通信、延迟敏感、流式 | 浏览器直连（需 gRPC-Web） |
 
-  REST
-    适用：对外 API、前后端交互、简单 CRUD
-    优点：通用、易调试、生态丰富
-    缺点：over-fetching / under-fetching
+## 中间件执行顺序（外 → 内）
 
-  GraphQL
-    适用：前端需要灵活查询、多端差异化、数据关系复杂
-    优点：客户端按需取数据、强类型 Schema
-    缺点：缓存困难、N+1 需要 DataLoader、安全需要查询深度限制
-    何时用：BFF 层，不建议直接暴露给公网
+请求 →
+1. 请求 ID（traceId）
+2. 访问日志
+3. CORS
+4. 安全响应头（Helmet / FastAPISecurity）
+5. 限流
+6. 认证（解析 Token）
+7. 请求体解析
+8. 参数校验
+9. 授权
+10. 业务处理（Controller → Service）
 
-  gRPC
-    适用：服务间通信、高性能内部调用、流式通信
-    优点：二进制协议快、强类型（Protobuf）、双向流
-    缺点：调试不直观、浏览器支持需要 gRPC-Web
-    何时用：微服务内部调用、对延迟敏感的场景
+← 响应
+11. 响应格式化
+12. 错误处理（全局兜底）
+13. 响应日志
 
+## 常见错误
 
-📌 中间件设计模式
+| 错误做法 | 正确做法 |
+|---|---|
+| `POST /createUser`、`GET /getUserById` | 名词复数、禁用动词：`POST /users` |
+| 百万行表用 `Offset` 分页 | 游标分页（`?cursor=...&limit=20`） |
+| `500 Internal Server Error: TypeError: ...` 暴露堆栈 | 全局处理器返回通用消息 + `request_id` |
+| Token 放在 URL 或 query string | `Authorization: Bearer` 头或 `HttpOnly` Cookie |
+| 校验逻辑写在 Service / Repository | 仅在 Controller / 路由层校验 |
+| `async def` 内调用 `requests.get` | 用 `httpx.AsyncClient` |
+| WebSocket 每条消息都鉴权 | 仅在 `accept()` 时鉴权一次 |
+| body 内返回 `error` 字段但 HTTP 状态仍是 200 | 用正确的 HTTP 状态码 |
+| Pydantic 模型配置 `extra = "allow"` | 配置 `extra = "forbid"` 拒绝未知字段 |
+| SPA 用 OAuth Implicit Flow | 改用 Authorization Code + PKCE |
+| 废弃 v1 接口未返回 `Sunset` 头 | 设置 `Sunset` ≥ 6 个月，过期后返回 410 |
 
-  中间件执行顺序（从外到内）：
-    请求 →
-      1. 请求 ID 生成（traceId）
-      2. 访问日志记录
-      3. CORS 处理
-      4. 安全头设置（Helmet / FastAPISecurity）
-      5. 限流
-      6. 认证（解析 Token）
-      7. 请求体解析（JSON / multipart）
-      8. 请求校验（参数/Body 校验）
-      9. 授权（权限检查）
-      10. 业务处理（Controller → Service）
-    ← 响应
-      11. 响应格式化
-      12. 错误处理（全局异常捕获）
-      13. 响应日志记录
+## WebSocket 与替代方案
 
-  关键中间件实现要点：
+| 场景 | 推荐 |
+|---|---|
+| 服务端主动推送、聊天、协同编辑、实时行情 | **WebSocket** |
+| 单向低频通知 | **SSE**（更简单） |
+| 偶尔更新、可接受延迟 | **轮询 / 长轮询** |
 
-    请求 ID（traceId）：
-      每个请求生成唯一 ID（UUID v4）
-      如果上游传了 X-Request-Id 则复用
-      全链路透传：日志、下游调用、消息队列、gRPC Context 元数据
-      响应头返回 X-Request-Id 方便排查
+**WebSocket 关键点：** 每 30s ping/pong 心跳；鉴权在 `accept()` 而非每帧；按业务维度分房间 / 频道；多实例用 Redis Pub/Sub 扇出。
 
-    限流中间件：
-      按 IP 限流：防刷接口（登录、注册、短信验证码）
-      按用户限流：防止单用户滥用
-      按 API 限流：保护特定的昂贵接口（如回测启动）
-      返回 429 + Retry-After 头
+## 版本管理
 
-    请求校验：
-      在 Controller/Route 入口处校验，不在 Service 里校验
-      校验失败立即返回 400/422，不执行任何业务逻辑
-      校验规则与业务逻辑分离（声明式校验 > 命令式校验）
-      白名单校验：只接受已知字段，忽略或拒绝未知字段
+| 策略 | 评价 |
+|---|---|
+| URL 路径：`/api/v1/users`、`/api/v2/users` | **推荐** |
+| 请求头：`Accept: application/vnd.myapp.v2+json` | 内部窄场景可用 |
+| 查询参数：`/api/users?version=2` | **避免** |
 
+- 非破坏性变更（加字段、加端点）→ 不升版本
+- 破坏性变更（改字段名、删字段、改语义）→ 必升版本 + 旧版维护 ≥ 6 个月 + `Sunset` 响应头
 
-📌 认证与授权
+## 重型参考（拆分文件）
 
-  认证（Authentication）— 你是谁？
+各子主题的完整内容放在同级文件中，本文件作为入口，按需加载对应文件。
 
-    JWT（JSON Web Token）：
-      适用：无状态认证，服务间传递用户信息
-      Access Token：短期有效（15-30 分钟）
-      Refresh Token：长期有效（7-30 天），用于刷新 Access Token
-      存储：Access Token 存内存/Cookie（HttpOnly），Refresh Token 存 Cookie（HttpOnly + Secure）
-      注意：JWT 签发后无法撤销 → 需要 Token 黑名单（Redis）处理强制登出
+- [`rest-design.md`](./rest-design.md) — 完整 URL / 响应 / 状态码规范
+- [`fastapi-patterns.md`](./fastapi-patterns.md) — 异步模式、依赖注入、Pydantic `extra="forbid"`
+- [`grpc-patterns.md`](./grpc-patterns.md) — Protobuf、状态码映射
+- [`middleware.md`](./middleware.md) — 中间件链路、限流、请求 ID
+- [`auth.md`](./auth.md) — JWT / OAuth / API Key / RBAC / ABAC
+- [`websocket.md`](./websocket.md) — 连接生命周期、房间、扩展
 
-    OAuth 2.0 / OIDC：
-      适用：第三方登录、开放平台
-      Authorization Code Flow（推荐）：用于服务端应用
-      PKCE 扩展：用于 SPA 和移动应用
-      不要用 Implicit Flow（已弃用，不安全）
+## 产出物清单
 
-    API Key：
-      适用：服务间调用、第三方集成
-      通过请求头传递（X-API-Key），不放在 URL 中
-      每个客户端独立的 Key，可单独吊销
-      配合限流使用
-
-  授权（Authorization）— 你能做什么？
-
-    RBAC（基于角色）：
-      用户 → 角色 → 权限
-      适用：权限模型简单、角色固定的系统
-      示例：admin 可以删除用户，editor 可以编辑文章，viewer 只能查看
-
-    ABAC（基于属性）：
-      基于用户属性、资源属性、环境属性的策略
-      适用：权限模型复杂、需要细粒度控制
-      示例：用户只能修改自己创建的订单，且订单状态为"待处理"
-
-    资源级权限检查（最常被遗漏的）：
-      不只检查"用户有没有权限做这个操作"
-      还要检查"用户有没有权限操作这个具体资源"
-      ❌ 只检查 user.role === 'editor'
-      ✅ 还要检查 article.author_id === user.id
-
-
-📌 错误处理
-
-  全局错误处理策略：
-
-    业务异常（可预期的）：
-      创建自定义异常类，携带错误码
-      在 Service 层抛出，在 Controller 层或全局处理器捕获
-      返回 4xx + 明确的错误码和消息
-
-    系统异常（不可预期的）：
-      全局异常处理器兜底
-      记录完整错误栈到日志（含 traceId）
-      返回 500 + 通用消息，不暴露内部细节
-      触发告警
-
-    第三方依赖异常：
-      超时：设置合理超时，返回降级响应或 503
-      格式异常：防御式解析，不信任外部返回值
-      限流：读取 Retry-After 头，实现退避重试
-
-
-📌 WebSocket / 实时推送
-
-  何时用 WebSocket：
-    需要服务端主动推送（聊天、通知、实时协作）
-    双向通信（在线游戏、协同编辑）
-    高频数据更新（实时行情、监控面板）
-
-  何时不用 WebSocket：
-    单向低频通知 → SSE（Server-Sent Events）更简单
-    偶尔的更新查询 → 轮询或长轮询够用
-    可以接受延迟 → 改用消息队列 + 推送服务
-
-  WebSocket 实现要点：
-    连接管理：心跳检测（ping/pong 每 30s），超时断开
-    消息格式：JSON，带 type 字段区分消息类型，带序列号保证有序性
-    重连策略：客户端断线后指数退避重连，带最大重试次数
-    鉴权：连接时通过 Token 认证，不在每条消息里带 Token
-    房间/频道：按业务维度分组（订单频道、聊天室），避免广播风暴
-    扩展性：多实例时用 Redis Pub/Sub 做消息分发
-
-
-📌 API 版本管理
-
-  版本策略：
-    URL 路径版本（推荐）：/api/v1/users、/api/v2/users
-    请求头版本：Accept: application/vnd.myapp.v2+json
-    查询参数版本：/api/users?version=2（不推荐）
-
-  版本升级原则：
-    非破坏性变更（加字段、加端点）→ 不需要升版本
-    破坏性变更（改字段名、删字段、改语义）→ 必须升版本
-    旧版本至少维护 6 个月，给客户端迁移时间
-    废弃版本返回 Sunset 头，提前通知
-
-
-📌 API 工程产出物清单
-  - API 契约文档（OpenAPI / Protobuf 定义文件）
-  - 错误码映射表（包含 HTTP 状态码与 gRPC 响应状态对照）
-  - 认证授权与 Token 管理方案说明
-  - 中间件编排链路拓扑
-  - WebSocket 实时推送消息协议定义
+- [ ] OpenAPI / Protobuf 契约文件
+- [ ] 错误码映射表（HTTP ↔ gRPC）
+- [ ] 认证与 Token 管理方案说明
+- [ ] 中间件编排链路图
+- [ ] WebSocket 实时推送消息协议（如涉及）
