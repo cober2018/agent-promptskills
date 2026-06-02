@@ -20,6 +20,8 @@ graph TD
     QR["📈 量化研究员"]:::agent
     QA["🔍 QA 专家"]:::agent
     DO["🔄 DevOps 自动化与SRE专家"]:::agent
+    NM["📱 新媒体运营专家"]:::agent
+    VC["🎬 视频剪辑指导师"]:::agent
 
     %% CTO
     CTO --> SA1["🏢 business-architecture 业务架构"]:::skill
@@ -53,6 +55,16 @@ graph TD
     DO --> DO1["🚀 cicd-engineering CI/CD 工程"]:::skill
     DO --> DO2["🏗️ infrastructure-automation 基础设施自动化"]:::skill
     DO --> DO3["📡 observability-ops 可观测性运维"]:::skill
+
+    %% NM
+    NM --> NM1["🗞️ news-gathering 每日新闻收集"]:::skill
+    NM --> NM2["📕 xhs-operation 小红书运营"]:::skill
+    NM --> NM3["🎵 douyin-tiktok-operation 抖音/TikTok运营"]:::skill
+    NM --> NM4["🟩 wechat-operation 微信公众号运营"]:::skill
+    NM --> NM5["📺 bilibili-operation B站运营"]:::skill
+
+    %% VC
+    VC --> VC1["✂️ video-editing-direction 剪辑与视听指导"]:::skill
 ```
 
 ---
@@ -70,6 +82,8 @@ graph TD
 | **[📊 数据工程师](./agents/data-engineer.md)** | `orange` | **ClickHouse/MongoDB 数据专家**。设计并运维高吞吐、幂等的 ETL 数据管线，实现 Medallion 分层规范。 | `pipeline-engineering`, `data-quality`, `lakehouse-platform` |
 | **[🔍 QA 专家](./agents/qa-engineer.md)** | `red` | **测试自动化与质量审计主关卡**。专精 Playwright 弹性定位 E2E 脚本、Pytest 数据隔离与 Locust 并发性能压测。 | `test-evidence`, `quality-gate` |
 | **[🔄 DevOps 自动化与SRE专家](./agents/devops-engineer.md)** | `cyan` | **IaC 编排与站点可靠性专家**。专精极简多阶段 Docker 构建、Nginx 反向代理加固与磁盘容量自愈保护。 | `cicd-engineering`, `infrastructure-automation`, `observability-ops` |
+| **[📱 新媒体运营专家](./agents/new-media-operator.md)** | `pink` | **全栈新媒体运营与内容营销专家**。精通全平台流量密码、爆款文案策划、热点网感捕捉与差异化分发。 | `news-gathering`, `xhs-operation`, `douyin-tiktok-operation`, `wechat-operation`, `bilibili-operation` |
+| **[🎬 视频剪辑指导师](./agents/video-editing-coach.md)** | `purple` | **资深影视后期与视听语言导演**。专精短/中长视频分镜脚本、BPM 音乐卡点与完播率视觉特效优化。 | `video-editing-direction` |
 
 ---
 
