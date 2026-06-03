@@ -87,6 +87,25 @@ graph TD
 
 ---
 
+## 协同治理权威文档
+
+涉及 4A 架构协同、交付角色分派和 agent 提示词最小硬约束时，以以下文档为准：
+
+- `docs/standards/architecture-collaboration-workflow.md`
+- `docs/standards/agent-delivery-responsibility-routing.md`
+- `docs/adr/0001-4a-collaboration-baseline.md`
+- `docs/adr/0002-agent-delivery-responsibility-routing.md`
+
+其中职责路由的关键口径为：
+
+- `frontend-engineer`：页面、组件、路由、状态管理、交互和视图层问题
+- `backend-engineer`：API、调度平台能力、权限审计、服务编排
+- `data-engineer`：采集任务、ETL/ELT、数仓、DQC、指标 / 因子 / Ins
+- `devops-engineer`：部署、监控、回滚、IaC、CI/CD
+- `qa-engineer`：测试设计、执行证据、发布建议
+
+---
+
 ## 文档格式规范（V2.0）
 
 本仓库 V2.0 全面升级为 **Audience-Based Language Strategy**（受众分层语言策略），所有 Agent 与 Skill 文件遵循统一的 Markdown 结构与语言分层。

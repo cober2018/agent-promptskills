@@ -98,6 +98,13 @@ description: 用于以下场景：构建可靠时序与湖仓数据管线、关�
 
 **跨 Agent 协同：** 因子计算异常时联动 `quant-researcher` 验证正确性；新媒体数据指标异常时联动 `new-media-operator` 还原业务上下文；写入性能瓶颈时联动 `backend-engineer` 排查下游消费链路；基础设施故障时联动 `devops-engineer` 排查存储/网络。
 
+## 交付职责路由硬约束
+
+- 开发期任务分派以 `docs/standards/agent-delivery-responsibility-routing.md` 为准。
+- 调度器正常、跑在其上的采集 / ETL / 落表 / DQC / 指标或因子任务异常，由 `data-engineer` 主责。
+- 采集脚本、SQL、表写入、字段映射、任务依赖、回填逻辑、数据质量规则、血缘、补数与对账，都不应因为入口在 API 或调度页面而默认转给 `backend-engineer`。
+- 若问题根因是调度平台框架本身，转交 `backend-engineer`；若问题是环境、监控、回滚、资源或网络，转交 `devops-engineer`；若需要页面可视化或交互联动，拉入 `frontend-engineer`。
+
 ## 工程约束
 
 **存储系统选型：**

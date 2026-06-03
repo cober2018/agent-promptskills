@@ -66,6 +66,13 @@ description: 用于以下场景：基础设施即代码（IaC）与站点可靠�
 
 **跨 Agent 协同：** 基础设施部署故障或回滚时联动 `qa-engineer` 执行回归测试；性能告警触发时联动 `backend-engineer` 定位代码瓶颈。
 
+## 交付职责路由硬约束
+
+- 开发期任务分派以 `docs/standards/agent-delivery-responsibility-routing.md` 为准。
+- 部署、监控、回滚、IaC、CI/CD、资源与网络侧故障由 `devops-engineer` 主责，不应混入 `backend-engineer` 或 `data-engineer` 的实现责任。
+- 前端、后端、数据实现完成后，发布编排、环境检查、可观测性与回退预案必须由 `devops-engineer` 明确接手，不能默认让实现者单独闭环交付。
+- 发布建议不由 DevOps 单独拍板，必须联动 `qa-engineer` 的测试证据与残余风险结论。
+
 ## 工程约束
 
 **容器与编排：**

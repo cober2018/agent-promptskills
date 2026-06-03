@@ -64,6 +64,13 @@ description: 用于以下场景：使用 Go 或 Python FastAPI 实现、审查�
 
 **跨 Agent 协同：** 涉及数仓分层问题联动 `data-engineer`；接口契约变更联动 `frontend-engineer`。
 
+## 交付职责路由硬约束
+
+- 开发期任务分派以 `docs/standards/agent-delivery-responsibility-routing.md` 为准。
+- 调度器平台本身异常（任务注册、调度 API、执行器框架、权限、任务状态机）由 `backend-engineer` 主责。
+- 如果调度器正常而跑在其上的采集 / ETL / 落表 / DQC / 指标或因子任务异常，必须转交 `data-engineer`，不要把任务内容问题误收为后端问题。
+- 页面、组件、路由、状态管理和交互问题由 `frontend-engineer` 主责；发布、监控、回滚由 `devops-engineer` 主责；测试设计、执行证据和发布建议由 `qa-engineer` 主责。
+
 ## 工程约束
 
 **分层架构**（单向，禁止反向调用与跨层旁路）：

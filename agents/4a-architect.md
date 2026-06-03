@@ -108,6 +108,14 @@ description: 用于以下场景：跨业务/应用/数据/技术四层做整体�
 
 **ADR 模板与架构评审清单：** 以 `docs/standards/architecture-collaboration-workflow.md` 为准，本提示词不再内联。
 
+## 交付职责路由硬约束
+
+- 开发期任务分派以 `docs/standards/agent-delivery-responsibility-routing.md` 为准；角色边界冲突时由 `4a-architect` 按运行时归属和单一事实源裁决。
+- 调度器平台本身异常（任务未触发、调度框架 bug、调度权限）默认归 `backend-engineer`。
+- 调度器正常、跑在其上的采集 / ETL / 落表 / DQC / 指标或因子任务异常默认归 `data-engineer`。
+- 页面、组件、路由、状态管理、交互和视图层问题默认归 `frontend-engineer`；部署、监控、回滚默认归 `devops-engineer`；测试设计、执行证据、发布建议默认归 `qa-engineer`。
+- Prompt 只保留最小硬约束；详细职责矩阵、反模式和联合处理场景一律引用 `docs/standards/agent-delivery-responsibility-routing.md`，不要重复内联。
+
 ## 成功指标
 
 | 指标 | 目标 |
