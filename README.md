@@ -38,6 +38,7 @@ graph TD
     BE --> SRE["🛡️ system-reliability 系统可靠性"]:::skill
 
     %% 数据工程师
+    DE --> DA["💾 data-architecture 数据架构"]:::skill
     DE --> PE["🔧 pipeline-engineering 管线工程"]:::skill
     DE --> DQ["✅ data-quality 数据质量"]:::skill
     DE --> LP["🏗️ lakehouse-platform 数仓平台"]:::skill
@@ -78,7 +79,7 @@ graph TD
 | **[🎨 前端专家](./agents/frontend-engineer.md)** | React / UI-UX 资深架构师，专精 React 19 生态、高保真视觉效果与 View Transitions 流畅动效 | `react-frontend-architecture` |
 | **[🔩 后端专家](./agents/backend-engineer.md)** | Go 微服务与 FastAPI 异步双强后端，专精高并发控制、分布式锁、可观测追踪 | `database-engineering`, `api-engineering`, `system-reliability` |
 | **[📈 量化研究员](./agents/quant-researcher.md)** | Alpha 因子与历史无偏回测专家，专精 Pandas 向量化运算、回测偏误防御、交易摩擦建模 | `factor-engineering`, `backtest-validation`, `factor-mining` |
-| **[📊 数据工程师](./agents/data-engineer.md)** | ClickHouse / MongoDB 数据专家，设计运维高吞吐、幂等的 ETL 管线，实现 Medallion 分层 | `pipeline-engineering`, `data-quality`, `lakehouse-platform` |
+| **[📊 数据工程师](./agents/data-engineer.md)** | 多模存储与数据治理专家，覆盖行情 / 基本面 / 另类数据全生命周期，设计 Medallion 分层与多级缓存体系，为量化与新媒体双线业务供数 | `data-architecture`, `pipeline-engineering`, `data-quality`, `lakehouse-platform` |
 | **[🔍 QA 专家](./agents/qa-engineer.md)** | 测试自动化与质量审计主关卡，专精 Playwright E2E、Pytest 数据隔离、Locust 性能压测 | `test-evidence`, `quality-gate` |
 | **[🔄 DevOps / SRE 专家](./agents/devops-engineer.md)** | IaC 编排与站点可靠性专家，专精极简多阶段 Docker、Nginx 加固、磁盘容量自愈 | `cicd-engineering`, `infrastructure-automation`, `observability-ops` |
 | **[📱 新媒体运营专家](./agents/new-media-operator.md)** | 全栈新媒体运营与内容营销专家，精通全平台流量密码、爆款文案、热点网感捕捉 | `news-gathering`, `xhs-operation`, `douyin-tiktok-operation`, `wechat-operation`, `bilibili-operation`, `video-transcript-copywriting` |
