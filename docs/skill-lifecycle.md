@@ -50,12 +50,12 @@
 
 | Skill | 一句话定位 | 何时用 |
 |---|---|---|
-| `superpowers:writing-skills` | 写 / 改 / 升级 Skill 的全流程权威 | 新建 Skill、编辑现有 Skill、Skill 部署前验证 |
+| `superpowers:writing-skills` (`skills/writing-skills/SKILL.md`) | 写 / 改 / 升级 Skill 的全流程权威 | 新建 Skill、编辑现有 Skill、Skill 部署前验证 |
 | `superpowers:using-superpowers` | 顶层调度：决定何时调用哪个 Skill | 每个会话开始时定位可用 Skill 集合 |
 | `superpowers:test-driven-development` | 写 Skill 之前必须先理解的底层 TDD 原理 | 与 writing-skills 配套，违反"先测试后写"是高频漏洞 |
-| `skillify` | 把已有的工作流 / 文档固化为 Skill | 散落在多处的 SOP 出现 ≥ 3 次复用时 |
-| `skill-health` | 评估单个 Skill 的健康度 | Skill 上线后定期巡检；用户反馈"Skill 没起作用"时 |
-| `prune` | 批量盘点并下线长期无引用的 Skill | 季度 / 半年度 Skill 盘点 |
+| `skillify` (`skills/skillify/SKILL.md`) | 把已有的工作流 / 文档固化为 Skill | 同一 SOP 在 3+ 任务 / 项目出现，且不能 regex 化时 |
+| `skill-health` (`skills/skill-health/SKILL.md`) | 评估单个 Skill 的健康度（compliance / rotation / bloat / drift） | Skill 上线后定期巡检；用户反馈"Skill 没起作用"时；季度复盘 |
+| `pruning-skills` (`skills/pruning-skills/SKILL.md`) | 标记 `Deprecated`、迁移引用、等待 release 窗口后再删除 | 季度 / 半年度 Skill 盘点；workspace Skill 数 > 80 时强制触发 |
 | `freeze` / `unfreeze` | 把一组 Skill 冻结到某版本基线 | 重大基线切换（如 4A 治理基线）、复盘窗口 |
 | `instinct-export` / `instinct-import` / `instinct-status` | 与 Skill 配套的"本能"导出导入 | 跨工作区迁移 Skill 时的辅助 |
 
@@ -98,10 +98,11 @@ Skill 治理本身属于 **Technology 层**（运行时 / 工具链），但 Ski
 |---|---|---|
 | `superpowers:writing-skills` | 活跃 | 本文件即按其方法论组织 |
 | `superpowers:using-superpowers` | 活跃 | 顶层入口，每次会话必跑 |
-| `skill-create` | 活跃 | 与 `superpowers:writing-skills` 功能重叠，需在 §4 注明权威源 |
-| `skillify` | 待盘 | 触发阈值"≥ 3 次复用"未量化 |
-| `skill-health` | 待盘 | 巡检节奏未制度化 |
-| `prune` | 待盘 | 上次运行时间未知 |
+| `superpowers:test-driven-development` | 活跃 | writing-skills 的底层原理 |
+| `skill-create` | 待盘 | 与 `superpowers:writing-skills` 功能重叠，需在 §4 注明权威源 |
+| `skillify` | 活跃 | 本轮新增 SKILL.md，触发阈值已量化（≥ 3 次复用） |
+| `skill-health` | 活跃 | 本轮新增 SKILL.md，巡检节奏（季度）已写入 SKILL.md |
+| `pruning-skills` | 活跃 | 本轮新增 SKILL.md，4 步协议 + verdict matrix 已落地 |
 | `freeze` / `unfreeze` | 待盘 | 与 4A 治理基线（ADR-0001）联动 |
 
 > 状态字段：`活跃`（高频使用 + 文档完整）/`待盘`（存在但未定期巡检）/`Deprecated`（已弃用，指向继任者）。
