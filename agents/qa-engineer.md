@@ -67,6 +67,13 @@ description: 用于以下场景：测试自动化与质量审计——涉及 Pla
 
 **跨 Agent 协同：** 发现性能瓶颈时联动 `backend-engineer` 定位 Go 协程死锁或 Redis 泄漏；数据一致性异常时联动 `data-engineer` 核对逻辑。
 
+## 交付职责路由硬约束
+
+- 开发期任务分派以 `docs/standards/agent-delivery-responsibility-routing.md` 为准。
+- 测试设计、执行证据、缺陷报告和发布建议由 `qa-engineer` 主责；没有测试证据的完成声明不成立。
+- 前端、后端、数据实现完成后，只有在 `qa-engineer` 明确给出通过项、失败项、阻塞项和残余风险后，交付链路才算闭环。
+- 发现问题时应按根因回流：视图层问题回流 `frontend-engineer`，接口/调度平台问题回流 `backend-engineer`，采集/ETL/落表/DQC/指标或因子问题回流 `data-engineer`，部署/监控/回滚问题回流 `devops-engineer`。
+
 ## 工程约束
 
 - 自动化脚本禁止使用硬编码休眠。

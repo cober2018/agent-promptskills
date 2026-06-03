@@ -16,6 +16,8 @@
 | Data 数据架构 | 领域模型、主数据、数据流 | 概念 / 逻辑 / 物理模型、Medallion 分层 | `data-architecture` skill、`data-engineer` |
 | Technology 技术架构 | 基础设施、运行时、安全合规 | IaC、SLI/SLO、零信任策略 | `technology-architecture` skill、`devops-engineer` |
 
+> 说明：`qa-engineer` 与 `devops-engineer` 是交付期的横切角色，不构成新的 4A 层。具体任务归属、交付协作流与反例以 `docs/standards/agent-delivery-responsibility-routing.md` 为准。
+
 ## 2. 能力域判定规则
 
 在提出任何架构变更建议前，先回答两个问题：
@@ -103,11 +105,20 @@
 - [ ] 跨层变更是否同时更新双方 standards 文档与 ADR？
 - [ ] 是否触发康威定律反向调整（团队边界 / 代码仓归属）？
 
+### 6.5 交付协作清单（涉及任务分派、实现协作或发布验收时追加）
+
+- [ ] 主责实现 agent 是否唯一（`frontend-engineer` / `backend-engineer` / `data-engineer` / `devops-engineer` / `qa-engineer`）？
+- [ ] 是否区分了「调度平台问题」与「调度器承载的任务问题」？
+- [ ] 若调度器正常，任务脚本 / SQL / 表写入 / DQC / 指标或因子逻辑是否归 `data-engineer` 主责？
+- [ ] 发布、部署、监控、回滚是否显式纳入 `devops-engineer`？
+- [ ] 测试设计、执行证据、发布建议是否显式纳入 `qa-engineer`？
+
 ## 7. 文档关系
 
 | 文档 | 关系 |
 |---|---|
 | `4a-architect` agent prompt | **引用**本文档；只承载 §3 五条硬约束，不内联流程 |
+| `docs/standards/agent-delivery-responsibility-routing.md` | 开发期 agent 职责路由权威源；本文件 §6.5 引用其结论 |
 | `docs/adr/NNNN-*.md` | **遵循** §4 模板；由 §5 边界变更触发 |
 | `docs/standards/AGENT_SCHEDULER_GUIDE.md` | 调度器的事实源；本文件 §6.2 引用其结论 |
 | `docs/standards/数据仓库架构文档.md` | 数仓的事实源；本文件 §6.3 引用其结论 |
