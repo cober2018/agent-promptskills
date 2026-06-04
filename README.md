@@ -1,6 +1,6 @@
 # Agent-PromptSkills：专业级 AI Agent 与 Skill 提示词工程体系
 
-> **构建人机协同的高阶数字化生产力骨架。** 本仓库集成 9 个核心专业级 AI Agent 角色与 39 个高度适配、开箱即用的配套 Skill 配置文件，形成工业级的全生命周期软件开发与量化投研设计规范。
+> **构建人机协同的高阶数字化生产力骨架。** 本仓库集成 9 个核心专业级 AI Agent 角色（含 1 个量化业务 Lead 调度 14 子角色）与 45+ 个高度适配、开箱即用的配套 Skill 配置文件，形成工业级的全生命周期软件开发与量化投研设计规范。
 
 ---
 
@@ -27,28 +27,48 @@ graph TB
     RD --> A4["🔍 QA 专家<br/>E2E / 压测 / 质量门禁"]:::member
     RD --> A5["🔄 DevOps / SRE 专家<br/>CI/CD / IaC / 可观测"]:::member
 
-    QT --> A6["📈 量化研究员<br/>因子 / 回测 / 业务 Lead"]:::member
+    QT --> Q0["📈 量化研究员<br/>14 角色调度者"]:::member
+    QT --> L1["分析师层 (6)<br/>市场/新闻/社媒/基本面/A股/舆情"]:::member
+    QT --> L2["研究员层 (2)<br/>看多 ↔ 看空 辩论"]:::member
+    QT --> L3["经理层 (2)<br/>研究经理 → 风险经理"]:::member
+    QT --> L4["交易员层 (1)<br/>5 项必含交易计划"]:::member
+    QT --> L5["风控辩论层 (3)<br/>激进/保守/中立"]:::member
     QT -.-> A7["📊 数据工程师<br/>湖仓 / ETL / 跨业务供数"]:::shared
 
     MT --> A8["📱 新媒体运营专家<br/>全平台内容 / 流量"]:::member
     MT --> A9["🎬 视频剪辑指导师<br/>分镜 / 视听 / 完播率"]:::member
 ```
 
+> **量化团队 14 角色详情**（反向工程自 [QuantAgents/tradingagents](https://github.com/cober2018/agent-promptskills) 同源项目）：[完整列表见 `./agents/quant/quant-researcher.md` 的 5 层图谱](./agents/quant-researcher.md#5-层派工图谱)。
+
 ### 团队职责边界
 
 | 团队 | 核心定位 | Agent 列表 |
 | :--- | :--- | :--- |
 | **🏛️ 研发团队** | 通用工程：产品 / 平台 / 质量 / 运维一站式 | 4A 架构师、前端专家、后端专家、QA 专家、DevOps/SRE 专家 |
-| **📈 量化团队** | 量化投研：因子 / 回测 / 业务侧 Lead | 量化研究员、<span style="color:#be185d">数据工程师（共享）</span> |
+| **📈 量化团队** | 量化投研：5 层 14 角色图谱（TradingAgents 风格） | 量化研究员（Lead + 调度者）、<span style="color:#4f46e5">**14 角色**</span>：6 分析师 + 2 研究员 + 2 经理 + 1 交易员 + 3 风控辩手、<span style="color:#be185d">数据工程师（共享）</span> |
 | **📱 新媒体团队** | 内容运营：全平台流量 / 视频剪辑 | 新媒体运营专家、视频剪辑指导师、<span style="color:#be185d">数据工程师（共享）</span> |
 
 > **跨团队派工原则**：4A 架构师对所有跨域变更负评审责任（详见 [`docs/standards/architecture-collaboration-workflow.md`](./docs/standards/architecture-collaboration-workflow.md)）。
+
+### 量化团队 14 角色展开
+
+| 层级 | 数量 | 角色 | 提示词路径 | 核心职责 |
+| :--- | :---: | :--- | :--- | :--- |
+| **调度者** | 1 | 量化研究员（Lead） | [`./agents/quant-researcher.md`](./agents/quant-researcher.md) | 业务 Lead + 5 层 14 角色派工 |
+| **分析师层** | 6 | 市场 / 新闻 / 社交媒体 / 基本面 / A股市场 / 新闻舆情 | [`./agents/quant/quant-market-analyst.md`](./agents/quant/quant-market-analyst.md) 等 6 个 | 并行收集 6 类原始信号（market / news / sentiment / fundamentals） |
+| **研究员层** | 2 | 看多 / 看空 | [`./agents/quant/quant-bull-researcher.md`](./agents/quant/quant-bull-researcher.md) | 多空成对辩论 |
+| **经理层** | 2 | 研究经理 / 风险经理 | [`./agents/quant/quant-research-manager.md`](./agents/quant/quant-research-manager.md) | 综合裁决 → 风控一票否决 |
+| **交易员层** | 1 | 交易员 | [`./agents/quant/quant-trader.md`](./agents/quant/quant-trader.md) | 输出可执行交易计划（5 项必含） |
+| **风控辩论层** | 3 | 激进 / 保守 / 中立 | [`./agents/quant/quant-aggressive-debator.md`](./agents/quant/quant-aggressive-debator.md) 等 3 个 | 3 方辩论评估交易计划 |
+
+**配套策略文件**：[`./skills/trading-strategies/`](./skills/trading-strategies/) 6 个 .md（fundamental / technical / news_social / research_manager / risk_trader / global_macro），由对应 Agent 必读。
 
 ---
 
 ## Agent-Skill 协同全景拓扑图
 
-以下展示本体系中 9 大核心 Agent 与 39 个专项 Skill 之间的调用与编排关系：
+以下展示本体系中 9 大核心 Agent（含量化团队展开为 14 子角色）与其他专项 Skill 之间的调用与编排关系：
 
 ```mermaid
 graph TD
@@ -120,7 +140,7 @@ graph TD
 | **[🏛️ 4A 架构师](./agents/4a-architect.md)** | 站在业务与技术交汇点，进行顶层数字化骨架设计与协同智能体统帅 | `business-architecture`, `application-architecture`, `data-architecture`, `technology-architecture` |
 | **[🎨 前端专家](./agents/frontend-engineer.md)** | React / UI-UX 资深架构师，专精 React 19 生态、高保真视觉效果与 View Transitions 流畅动效 | `react-frontend-architecture` |
 | **[🔩 后端专家](./agents/backend-engineer.md)** | Go 微服务与 FastAPI 异步双强后端，专精高并发控制、分布式锁、可观测追踪 | `database-engineering`, `api-engineering`, `system-reliability` |
-| **[📈 量化研究员](./agents/quant-researcher.md)** | Alpha 因子与历史无偏回测专家，专精 Pandas 向量化运算、回测偏误防御、交易摩擦建模 | `factor-engineering`, `backtest-validation`, `factor-mining` |
+| **[📈 量化研究员](./agents/quant-researcher.md)** | 量化业务侧 Lead + 5 层 14 角色调度者；专精 Pandas 向量化、回测偏误防御、交易摩擦建模 | `factor-engineering`, `backtest-validation`, `factor-mining` + 6 个 [`./skills/trading-strategies/`](./skills/trading-strategies/) 策略文件 |
 | **[📊 数据工程师](./agents/data-engineer.md)** | 多模存储与数据治理专家，覆盖行情 / 基本面 / 另类数据全生命周期，设计 Medallion 分层与多级缓存体系，为量化与新媒体双线业务供数 | `data-architecture`, `pipeline-engineering`, `data-quality`, `lakehouse-platform` |
 | **[🔍 QA 专家](./agents/qa-engineer.md)** | 测试自动化与质量审计主关卡，专精 Playwright E2E、Pytest 数据隔离、Locust 性能压测 | `test-evidence`, `quality-gate` |
 | **[🔄 DevOps / SRE 专家](./agents/devops-engineer.md)** | IaC 编排与站点可靠性专家，专精极简多阶段 Docker、Nginx 加固、磁盘容量自愈 | `cicd-engineering`, `infrastructure-automation`, `observability-ops` |
@@ -242,6 +262,7 @@ graph TD
 | [factor-engineering](./skills/factor-engineering/SKILL.md) | 因子分类、向量化、MAD 去极值、IC 评估 | 量化研究员 |
 | [factor-mining](./skills/factor-mining/SKILL.md) | AI 节点工作流、ML 非线性特征、复合因子 | 量化研究员 |
 | [backtest-validation](./skills/backtest-validation/SKILL.md) | A 股 T+1、涨跌停、四大偏误、滑点建模 | 量化研究员 |
+| [trading-strategies/](./skills/trading-strategies/) | 6 个策略知识包（基本面/技术/舆情/裁决/风控交易/全球宏观），14 角色量化团队必读 | 量化团队 14 角色 |
 
 ### 🛡️ 质量与运维层
 
