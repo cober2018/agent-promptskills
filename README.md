@@ -4,6 +4,48 @@
 
 ---
 
+## 公司组织架构（团队 × Agent 树）
+
+本 AI 团队按业务方向划分为 **3 个团队**、9 个 Agent。**数据工程师** 跨团队服务（研发平台 + 量化湖仓 + 新媒体业务），以虚线样式标注。
+
+```mermaid
+graph TB
+    classDef root fill:#fef3c7,stroke:#d97706,stroke-width:3px,color:#92400e;
+    classDef team fill:#eef2ff,stroke:#4f46e5,stroke-width:2px,color:#312e81;
+    classDef member fill:#f0fdf4,stroke:#16a34a,stroke-width:1px,color:#14532d;
+    classDef shared fill:#fce7f3,stroke:#be185d,stroke-width:2px,color:#831843,stroke-dasharray: 5 5;
+
+    ROOT["🏢 Agent-PromptSkills<br/>企业级 AI 团队"]:::root
+
+    ROOT --> RD["🏛️ 研发团队<br/>R&D · 通用工程"]:::team
+    ROOT --> QT["📈 量化团队<br/>Quant · 投研"]:::team
+    ROOT --> MT["📱 新媒体团队<br/>New Media · 内容运营"]:::team
+
+    RD --> A1["🏛️ 4A 架构师<br/>顶层设计 + ADR"]:::member
+    RD --> A2["🎨 前端专家<br/>React 19 / 状态 / 动效"]:::member
+    RD --> A3["🔩 后端专家<br/>Go / FastAPI / 高并发"]:::member
+    RD --> A4["🔍 QA 专家<br/>E2E / 压测 / 质量门禁"]:::member
+    RD --> A5["🔄 DevOps / SRE 专家<br/>CI/CD / IaC / 可观测"]:::member
+
+    QT --> A6["📈 量化研究员<br/>因子 / 回测 / 业务 Lead"]:::member
+    QT -.-> A7["📊 数据工程师<br/>湖仓 / ETL / 跨业务供数"]:::shared
+
+    MT --> A8["📱 新媒体运营专家<br/>全平台内容 / 流量"]:::member
+    MT --> A9["🎬 视频剪辑指导师<br/>分镜 / 视听 / 完播率"]:::member
+```
+
+### 团队职责边界
+
+| 团队 | 核心定位 | Agent 列表 |
+| :--- | :--- | :--- |
+| **🏛️ 研发团队** | 通用工程：产品 / 平台 / 质量 / 运维一站式 | 4A 架构师、前端专家、后端专家、QA 专家、DevOps/SRE 专家 |
+| **📈 量化团队** | 量化投研：因子 / 回测 / 业务侧 Lead | 量化研究员、<span style="color:#be185d">数据工程师（共享）</span> |
+| **📱 新媒体团队** | 内容运营：全平台流量 / 视频剪辑 | 新媒体运营专家、视频剪辑指导师、<span style="color:#be185d">数据工程师（共享）</span> |
+
+> **跨团队派工原则**：4A 架构师对所有跨域变更负评审责任（详见 [`docs/standards/architecture-collaboration-workflow.md`](./docs/standards/architecture-collaboration-workflow.md)）。
+
+---
+
 ## Agent-Skill 协同全景拓扑图
 
 以下展示本体系中 9 大核心 Agent 与 39 个专项 Skill 之间的调用与编排关系：
