@@ -89,10 +89,11 @@ graph TD
 
 ## 协同治理权威文档
 
-涉及 4A 架构协同、交付角色分派和 agent 提示词最小硬约束时，以以下文档为准：
+涉及 4A 架构协同、交付角色分派、agent 提示词最小硬约束和**多 Agent 团队搭建方法论**时，以以下文档为准：
 
 - `docs/standards/architecture-collaboration-workflow.md`
 - `docs/standards/agent-delivery-responsibility-routing.md`
+- `docs/standards/multi-agent-team-bootstrap.md` ← **团队搭建方法论权威源**（13 步流程 + 派工矩阵 + 5 个标准模板）
 - `docs/adr/0001-4a-collaboration-baseline.md`
 - `docs/adr/0002-agent-delivery-responsibility-routing.md`
 
@@ -242,6 +243,18 @@ graph TD
 | [using-git-worktrees](./skills/using-git-worktrees/SKILL.md) | 使用 Git Worktree 独立开发，保持主工作区干净 | 多任务并行、分支隔离 |
 | [finishing-a-development-branch](./skills/finishing-a-development-branch/SKILL.md) | 研发分支合并、测试用例回归与临时分支清理 | 功能开发合并时 |
 | [writing-skills](./skills/writing-skills/SKILL.md) | 编写与迭代 AI Agent 专项 Skill 的最佳实践 | 自定义 Skill 扩充 |
+
+### 🏗️ 团队搭建层
+
+*注：团队搭建层将本仓库的 Agent + Skill 体系**打包成可一键复用的方法论**，用于在新项目里按 13 步流程从 0 跑通 `/pm` 派工入口。调用时仅需说"为 X 项目搭建多 Agent 团队"或"装 agent / 装 skill"。*
+
+| Skill | 核心能力 | 适用场景 |
+| :--- | :--- | :--- |
+| [bootstrap-team](./skills/bootstrap-team/SKILL.md) | 13 步流程：4A 治理基线 → Agent 选型 → Skill 路由 → ROUTING 权威源 → teammateMode → ADR 登记 → commit；附 5 个标准 Prompt 模板与失败案例 | 新项目初始化 / 多 Agent 团队搭建 |
+
+**配套权威文档**：[`docs/standards/multi-agent-team-bootstrap.md`](./docs/standards/multi-agent-team-bootstrap.md) — 13 步流程、派工硬约束、跨域 ADR 清单、组织健康度指标的唯一方法论权威源。
+
+**触发关键词**：`bootstrap team`、`bootstrap agents`、`搭建团队`、`装 agent`、`装 skill`。
 
 ---
 
