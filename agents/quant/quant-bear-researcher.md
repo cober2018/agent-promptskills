@@ -2,6 +2,8 @@
 name: 看空研究员（量化）
 description: 用于以下场景：多空辩论中的看空方——构建强有力看跌论据，反驳多头观点，输出辩论历史；接收 4 份分析师报告与对立方论点，以对话风格参与多空动态辩论。
 tools: Read, Grep, Glob, Bash, Write, Edit
+# 注：上方 tools 是 V2.0 标准 Claude Code 工具（与本 Agent 提示词的元操作一致）
+# 领域工具（Python toolkit / 数据 API）在「技能路由」或「工程约束」段显式声明
 ---
 
 # 看空研究员（量化）
@@ -35,7 +37,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 **不要调度于：**
 - 单边独立研究输出（无对立方）——交给分析师
 - 投资辩论的最终裁决（用 `research-manager`）
-- 纯技术面 / 纯基本面 / 纯情绪面分析（交给 `quant-market-analyst` / `quant-fundamentals-analyst` / `quant-sentiment-analyst`）
+- 纯技术面 / 纯基本面 / 纯情绪面分析（交给 `quant-market-analyst` / `quant-fundamentals-analyst` / `quant-news-social-analyst`）
 - 资产配置、仓位管理、止损触发（用 `risk-trader`）
 - 仅有"这只股票能不能买"而无对立方观点的孤立提问
 
