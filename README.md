@@ -1,6 +1,6 @@
 # Agent-PromptSkills：专业级 AI Agent 与 Skill 提示词工程体系
 
-> **构建人机协同的高阶数字化生产力骨架。** 本仓库集成 9 个核心专业级 AI Agent 角色（含 1 个量化业务 Lead 调度 5 角色——量化策略研究员 + 3 研究员 + 数据工程师）与 45+ 个高度适配、开箱即用的配套 Skill 配置文件，形成工业级的全生命周期软件开发与量化投研设计规范。
+> **构建人机协同的高阶数字化生产力骨架。** 本仓库集成 **11 个核心专业级 AI Agent 角色**（含业务 PMO / 推进官、4A 架构师、量化 Lead + 4 个研究领域 Agent）与 **45+ 个高度适配、开箱即用的配套 Skill 配置文件**，外加 `/pm` 命令入口、9 步推进链路 hook、3 份组织治理 ADR 与 4 份 standards 权威源，形成工业级的全生命周期软件开发与量化投研设计规范。
 
 ---
 
@@ -12,11 +12,27 @@
 - 4A 治理：[`docs/standards/architecture-collaboration-workflow.md`](docs/standards/architecture-collaboration-workflow.md)
 - 派工引擎路由：[`.claude/skills/pm-engine/SKILL.md`](.claude/skills/pm-engine/SKILL.md) —— 4A / 前端切换 CC / Codex / Gemini / Antigravity
 
+### /pm 命令与 9 步推进链路
+
+- `/pm` 入口：[`.claude/commands/pm.md`](.claude/commands/pm.md) —— 业务侧唯一对话接口，激活 PMO 推进官模式
+- 9 步推进机制：详见 [`docs/standards/multi-agent-team-bootstrap.md` §3.4](docs/standards/multi-agent-team-bootstrap.md) —— PM 持续催每个子任务的 9 步 owner，催 / 卡 / 升级三动作贯穿子任务生命周期
+- 9 步 PreToolUse 拦截：[`.claude/hooks/check-9step.sh`](.claude/hooks/check-9step.sh) —— 非例行 git commit 强制要求 `docs/tasks/<branch>.md` 含 9 步 checklist
+- 9 步 plan 模板：[`docs/tasks/_template.md`](docs/tasks/_template.md)
+
+### 派工引擎路由（4A / 前端）
+
+- Skill 入口：[`.claude/skills/pm-engine/SKILL.md`](.claude/skills/pm-engine/SKILL.md) —— 手动切换 4A 架构师 / 前端 Agent 派工引擎（CC / Codex / Gemini / Antigravity）
+- 状态文件：`.claude/engine-config.json`（不存在则全部默认 cc）
+- 切换命令：`bash .claude/skills/pm-engine/route.sh <role> <engine>`（role: 4a/architect/frontend/fe；engine: cc/codex/gemini/agy）
+- 4A 自身架构评审 / ADR 撰写 / 跨域评审**不**受引擎路由影响（始终由 4A 自己做）
+
 ---
 
 ## 公司组织架构（团队 × Agent 树）
 
-本 AI 团队按业务方向划分为 **3 个团队**、9 个 Agent。**数据工程师** 跨团队服务（研发平台 + 量化湖仓 + 新媒体业务），以虚线样式标注。
+本 AI 团队按业务方向划分为 **3 个团队**、11 个 Agent。**数据工程师** 跨团队服务（研发平台 + 量化湖仓 + 新媒体业务），以虚线样式标注。
+
+> **本仓库当前 11 个核心 Agent**：业务 PMO（推进官）→ 4A 架构师（技术 Lead）→ 后端 / 前端 / 数据 / QA / DevOps 专家（IC）；量化 Lead → 4 个研究领域 Agent（china-market / factor / news-social / strategy）→ 数据工程师（共享）；新媒体运营专家 → 视频剪辑指导师。
 
 ```mermaid
 graph TB
@@ -63,11 +79,14 @@ graph TB
 
 | 层级 | 角色 | 提示词路径 | 核心职责 |
 | :--- | :--- | :--- | :--- |
+| **工程入口** | 量化 Lead | [`./agents/quant-lead.md`](./agents/quant-lead.md) | 业务 Lead 模式（接 PM 派工 → 写四件套 → 派 4A）+ 执行模式（4A 派回时跑因子工程 / 回测 / IC 评估）|
 | **决策层** | 量化策略研究员 | [`./agents/quant/quant-strategy-researcher.md`](./agents/quant/quant-strategy-researcher.md) | 多信号联合优化 + 风险模型 + 5 项必含交易计划 + 货币识别（A 股/港股/美股）|
 | **研究层** | 因子研究员 | [`./agents/quant/quant-factor-researcher.md`](./agents/quant/quant-factor-researcher.md) | 基本面 4 类策略 + 财务多维 + IC/IR 评估 + 多空因子视角 + 向量化防偏误 |
 | **研究层** | 新闻舆情分析师 | [`./agents/quant/quant-news-social-analyst.md`](./agents/quant/quant-news-social-analyst.md) | 5 类新闻舆情策略 + A 股社媒情绪（雪球/股吧/同花顺）+ news_report + sentiment_report |
 | **研究层** | A股市场分析师 | [`./agents/quant/quant-china-market-analyst.md`](./agents/quant/quant-china-market-analyst.md) | 11 类 A 股技术策略 + 量价位置阶段 + 三段式结论（支持/反对/等待） |
 | **数据层** | 数据工程师（共享） | [`./agents/data-engineer.md`](./agents/data-engineer.md) | Medallion / 行情 / 基本面 / 另类数据 / DQC；为量化与新媒体双线业务供数 |
+
+> **架构决策见** [`docs/adr/0003-quant-team-merge.md`](docs/adr/0003-quant-team-merge.md) —— quant-lead 与 4 个研究领域 Agent 并行存在，工程入口 + 研究流水线完整覆盖。
 
 **配套策略文件**：[`./skills/trading-strategies/`](./skills/trading-strategies/) 6 个 .md（fundamental / technical / news_social / research_manager / risk_trader / global_macro），由对应 Agent 必读。
 
@@ -144,6 +163,8 @@ graph TD
 
 | Agent 角色 | 核心职责与使命 | 绑定的专项 Skill |
 | :--- | :--- | :--- |
+| **[🧭 业务 PMO / 推进官](./agents/pm.md)** | 业务侧唯一入口，3 角色合一：PMO 进度跟踪 + 需求分流官 + 推进官（持续催 9 步进度 / 卡时升级 / 跨 Lead 协调） | `brainstorming`, `writing-plans`, `business-architecture`(只读) |
+| **[📈 量化 Lead](./agents/quant-lead.md)** | 量化业务侧 Lead（写四件套 → 派 4A 评审）+ 因子工程执行者（4A 派回时写因子 / 回测 / IC 评估）| `factor-engineering`, `backtest-validation`, `factor-mining` |
 | **[🏛️ 4A 架构师](./agents/4a-architect.md)** | 站在业务与技术交汇点，进行顶层数字化骨架设计与协同智能体统帅 | `business-architecture`, `application-architecture`, `data-architecture`, `technology-architecture` |
 | **[🎨 前端专家](./agents/frontend-engineer.md)** | React / UI-UX 资深架构师，专精 React 19 生态、高保真视觉效果与 View Transitions 流畅动效 | `react-frontend-architecture` |
 | **[🔩 后端专家](./agents/backend-engineer.md)** | Go 微服务与 FastAPI 异步双强后端，专精高并发控制、分布式锁、可观测追踪 | `database-engineering`, `api-engineering`, `system-reliability` |
@@ -163,8 +184,10 @@ graph TD
 - `docs/standards/architecture-collaboration-workflow.md`
 - `docs/standards/agent-delivery-responsibility-routing.md`
 - `docs/standards/multi-agent-team-bootstrap.md` ← **团队搭建方法论权威源**（13 步流程 + 派工矩阵 + 5 个标准模板）
+- `docs/standards/AGENT_ORG_INDEX.md` ← **5 类文件清单 + 启动顺序 + 引用关系图**（推荐先读）
 - `docs/adr/0001-4a-collaboration-baseline.md`
 - `docs/adr/0002-agent-delivery-responsibility-routing.md`
+- `docs/adr/0003-quant-team-merge.md` ← **量化团队架构**（quant-lead 工程入口 + 4 研究领域 Agent 并行）
 
 其中职责路由的关键口径为：
 
@@ -314,6 +337,14 @@ graph TD
 | [finishing-a-development-branch](./skills/finishing-a-development-branch/SKILL.md) | 研发分支合并、测试用例回归与临时分支清理 | 功能开发合并时 |
 | [writing-skills](./skills/writing-skills/SKILL.md) | 编写与迭代 AI Agent 专项 Skill 的最佳实践 | 自定义 Skill 扩充 |
 
+### 📋 流程与治理辅助层
+
+| 文件 | 用途 | 适用场景 |
+| :--- | :--- | :--- |
+| [`.claude/commands/pm.md`](.claude/commands/pm.md) | `/pm` 命令入口 | 用户所有需求的第一承接点 |
+| [`.claude/hooks/check-9step.sh`](.claude/hooks/check-9step.sh) | 9 步链路 PreToolUse 拦截 hook | 非例行 git commit 强制要求 plan 文件 |
+| [`docs/tasks/_template.md`](docs/tasks/_template.md) | 9 步 plan 模板 | 复制 → 填具体内容 → 按 9 步推进 |
+
 ### 🏗️ 团队搭建层
 
 *注：团队搭建层将本仓库的 Agent + Skill 体系**打包成可一键复用的方法论**，用于在新项目里按 13 步流程从 0 跑通 `/pm` 派工入口。调用时仅需说"为 X 项目搭建多 Agent 团队"或"装 agent / 装 skill"。*
@@ -325,6 +356,14 @@ graph TD
 **配套权威文档**：[`docs/standards/multi-agent-team-bootstrap.md`](./docs/standards/multi-agent-team-bootstrap.md) — 13 步流程、派工硬约束、跨域 ADR 清单、组织健康度指标的唯一方法论权威源。
 
 **触发关键词**：`bootstrap team`、`bootstrap agents`、`搭建团队`、`装 agent`、`装 skill`。
+
+### ⚙️ 派工引擎路由层
+
+*注：派工引擎路由 skill 用于手动切换 4A 架构师 / 前端 Agent 派工时使用的 AI 引擎（CC 默认 / Codex / Gemini / Antigravity），不改变 Agent 自身角色与职责。*
+
+| Skill | 核心能力 | 适用场景 |
+| :--- | :--- | :--- |
+| [pm-engine](./skills/pm-engine/SKILL.md) | 手动切换 4A / 前端派工引擎（cc / codex / gemini / agy），状态持久化到 `.claude/engine-config.json` | 跨引擎派工实验、困难任务切 Codex、前端切 Gemini / Antigravity 验证 |
 
 ---
 
