@@ -19,11 +19,12 @@
 - 9 步 PreToolUse 拦截：[`.claude/hooks/check-9step.sh`](.claude/hooks/check-9step.sh) —— 非例行 git commit 强制要求 `docs/tasks/<branch>.md` 含 9 步 checklist
 - 9 步 plan 模板：[`docs/tasks/_template.md`](docs/tasks/_template.md)
 
-### 派工引擎路由（4A / 前端）
+### 派工引擎路由（4A / 前端，v2.0 交互式菜单）
 
-- Skill 入口：[`.claude/skills/pm-engine/SKILL.md`](.claude/skills/pm-engine/SKILL.md) —— 手动切换 4A 架构师 / 前端 Agent 派工引擎（CC / Codex / Gemini / Antigravity）
+- Skill 入口：[`.claude/skills/pm-engine/SKILL.md`](.claude/skills/pm-engine/SKILL.md) —— 交互式菜单切换 4A 架构师 / 前端 Agent 派工引擎（CC / Codex / Gemini / Antigravity）
 - 状态文件：`.claude/engine-config.json`（不存在则全部默认 cc）
-- 切换命令：`bash .claude/skills/pm-engine/route.sh <role> <engine>`（role: 4a/architect/frontend/fe；engine: cc/codex/gemini/agy）
+- 触发方式：调用 `/pm-engine` 后由 `AskUserQuestion` 弹出二级菜单（操作类型 → 引擎选择），无需手敲命令
+- 引擎矩阵：4A → `cc` / `codex`；前端 → `cc` / `gemini` / `agy`
 - 4A 自身架构评审 / ADR 撰写 / 跨域评审**不**受引擎路由影响（始终由 4A 自己做）
 
 ---
