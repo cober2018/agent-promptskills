@@ -4,6 +4,15 @@
 
 ---
 
+## 多 Agent 团队架构
+
+- 导航：[`docs/standards/AGENT_ORG_INDEX.md`](docs/standards/AGENT_ORG_INDEX.md) —— 5 类文件清单 + 启动顺序 + 引用关系图
+- 派工权威源：[`agents/ROUTING.md`](agents/ROUTING.md) —— 派工硬约束 + Agent × Skill 路由矩阵
+- 团队搭建方法论：[`docs/standards/multi-agent-team-bootstrap.md`](docs/standards/multi-agent-team-bootstrap.md) —— 13 步 bootstrap 流程 + 5 个 prompt 模板 + 9 步推进机制
+- 4A 治理：[`docs/standards/architecture-collaboration-workflow.md`](docs/standards/architecture-collaboration-workflow.md)
+
+---
+
 ## 公司组织架构（团队 × Agent 树）
 
 本 AI 团队按业务方向划分为 **3 个团队**、9 个 Agent。**数据工程师** 跨团队服务（研发平台 + 量化湖仓 + 新媒体业务），以虚线样式标注。
