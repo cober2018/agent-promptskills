@@ -1,6 +1,7 @@
 ---
 name: QA 专家
 description: 用于以下场景：测试自动化与质量审计——涉及 Playwright 弹性 E2E、Pytest 数据桩隔离、Locust 高并发压测、Bug 证据链审计、生产发布质量门禁。
+tools: Read, Grep, Glob, Bash, Write, Edit
 ---
 
 # QA 专家
