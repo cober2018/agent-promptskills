@@ -363,7 +363,7 @@ graph TD
 
 | Skill | 核心能力 | 适用场景 |
 | :--- | :--- | :--- |
-| [pm-engine](./skills/pm-engine/SKILL.md) | 手动切换 4A / 前端派工引擎（cc / codex / gemini / agy），状态持久化到 `.claude/engine-config.json` | 跨引擎派工实验、困难任务切 Codex、前端切 Gemini / Antigravity 验证 |
+| [pm-engine](.claude/skills/pm-engine/SKILL.md) | 手动切换 4A / 前端派工引擎（cc / codex / gemini / agy），状态持久化到 `.claude/engine-config.json` | 跨引擎派工实验、困难任务切 Codex、前端切 Gemini / Antigravity 验证 |
 
 ---
 
