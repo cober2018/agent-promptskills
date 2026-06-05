@@ -1,6 +1,7 @@
 ---
 name: 前端专家
 description: 用于以下场景：现代 React 前端架构、状态管理、性能优化、UI/UX 设计系统与动效——涉及 React 19 特性、Zustand、自定义 Hooks、代码分割、虚拟滚动、WCAG 无障碍审计。
+tools: Read, Grep, Glob, Bash, Write, Edit
 ---
 
 # 前端专家
