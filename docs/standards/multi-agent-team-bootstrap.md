@@ -85,10 +85,10 @@
 
 | 规范 | 例子 | 反例 |
 |---|---|---|
-| 文件名用英文 kebab-case | `quant-researcher.md`, `qa-engineer.md` | `QuantResearcher.md`, `quant_researcher.md` |
+| 文件名用英文 kebab-case | `quant-lead.md`, `qa-engineer.md` | `QuantResearcher.md`, `quant_researcher.md` |
 | description 用中文（中文栈） / 英文（英文栈） | "用于以下场景：…" | "This agent does X."（混语言项目） |
-| name 用人类可读的中文 | `量化研究员（量化业务侧 Lead）` | `quant-researcher`（无人类可读名） |
-| 角色冲突时**合并双角色**，不新建独立 agent | quant-pm 合并到 quant-researcher（ADR-0003） | 拆出独立 quant-pm（业务 Lead 不懂技术，懂技术的不管业务） |
+| name 用人类可读的中文 | `量化研究员（量化业务侧 Lead）` | `quant-lead`（无人类可读名） |
+| 角色冲突时**合并双角色**，不新建独立 agent | quant-pm 合并到 quant-lead（ADR-0003） | 拆出独立 quant-pm（业务 Lead 不懂技术，懂技术的不管业务） |
 
 ---
 
@@ -132,11 +132,11 @@ ADR 模板见 [architecture-collaboration-workflow.md §4](./architecture-collab
 **模式 B：业务侧需求 → PM → 业务 Lead → 4A → 专家（双角色模式执行）**
 ```
 用户：「加个小市值反转因子」
-→ PM：判定量化业务，派 quant-researcher（业务 Lead 模式）
-→ quant-researcher（业务 Lead）：写四件套（数据契约/因子假设/回测方案/验收标准）
-→ 4A：评审四件套，派回 quant-researcher（执行模式）
-→ quant-researcher（执行）：写因子 / 回测代码
-→ quant-researcher（业务 Lead 验收）：看 IC / Sharpe / 回撤
+→ PM：判定量化业务，派 quant-lead（业务 Lead 模式）
+→ quant-lead（业务 Lead）：写四件套（数据契约/因子假设/回测方案/验收标准）
+→ 4A：评审四件套，派回 quant-lead（执行模式）
+→ quant-lead（执行）：写因子 / 回测代码
+→ quant-lead（业务 Lead 验收）：看 IC / Sharpe / 回撤
 ```
 
 **模式 C：QA / 验证需求 → PM → 4A → QA**
@@ -282,7 +282,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit[, Agent]
 ```markdown
 ---
 name: 业务 PMO（PM / 需求分流官 / 推进官）
-description: 用于以下场景：作为业务侧唯一入口接收用户粗需求——涉及粗探查（≤ 5 分钟）、跨团队拆分、派给对应团队 Lead（4A / quant-researcher / <domain>）、**主动推进各子任务的 9 步进度**（催/卡/升级）、跨 Lead 协调、阻塞时升级 User。
+description: 用于以下场景：作为业务侧唯一入口接收用户粗需求——涉及粗探查（≤ 5 分钟）、跨团队拆分、派给对应团队 Lead（4A / quant-lead / <domain>）、**主动推进各子任务的 9 步进度**（催/卡/升级）、跨 Lead 协调、阻塞时升级 User。
 tools: Read, Grep, Glob, Write, Edit
 ---
 
@@ -302,7 +302,7 @@ tools: Read, Grep, Glob, Write, Edit
 | 入口 | 用户所有需求的第一承接点，**不绕过** |
 | 粗探查 | 接到粗需求后**≤ 5 分钟**判定业务类型 + 涉及模块；不深分析 |
 | 跨团队拆分 | 跨团队任务拆成独立子任务，标注依赖关系 |
-| 派 Lead | 派给对应团队 Lead（**不派 IC**）：技术 → 4A；量化 → quant-researcher Lead；内容 → <domain> |
+| 派 Lead | 派给对应团队 Lead（**不派 IC**）：技术 → 4A；量化 → quant-lead Lead；内容 → <domain> |
 | **9 步推进** | **持续催**每个子任务的 9 步 owner（Lead / IC / qa-engineer），**盯 artifact 落盘**（不写内容）|
 | 跨 Lead 协调 | 跨 Lead 依赖 / 争议 → PM 升级 User，**不替 User 拍板** |
 | 跟踪 | 跨子任务进度同步、催 Lead 报告、整合结果 |
@@ -313,7 +313,7 @@ tools: Read, Grep, Glob, Write, Edit
 2. **1 关键问题原则** —— 与用户对齐时，**最多 1 个关键问题**
 3. **粗探查 ≤ 5 分钟** —— 不深分析，不读源码细节
 4. **跨团队拆分** —— 跨团队任务必拆；子任务之间弱依赖并行、强依赖串行
-5. **派 Lead 不派 IC** —— 派给 4A / quant-researcher Lead / <domain> Lead；**绝不**派 backend-engineer 等 IC
+5. **派 Lead 不派 IC** —— 派给 4A / quant-lead Lead / <domain> Lead；**绝不**派 backend-engineer 等 IC
 6. **9 步主动推进** —— 派工**不是结束**；每步节点都**问**对应 owner "做没做？artifact 在哪？"
 7. **进度跟踪不评审内容** —— PM 只看 Lead 报告的"进度"和"阻塞"，**不看**内容对错（那是 Lead 团队内 QA 的事）
 8. **不写 ADR** —— 跨域变更由 4A 评审时触发 ADR，PM **不写**
@@ -409,7 +409,7 @@ PM 派完 Lead 后**不是结束**，是**开始推进**。每步节点都**主�
 - 任意 Step 缺勾 → 评审不通过
 - Hook 不检查 9 步是否完成（避免太重），但人工评审兜底
 
-### 6.2 业务 Lead + 技术执行者模板（双角色合一者，如 `quant-researcher.md`）
+### 6.2 业务 Lead + 技术执行者模板（双角色合一者，如 `quant-lead.md`）
 
 ```markdown
 ---
@@ -547,7 +547,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 
 2. **决定装哪些 Agent**
    - 必备 5 个（PM / 4A / 后端 / 前端 / 数据）→ 任何项目
-   - 业务 Lead 1 个（如 quant-researcher / pm-researcher）→ 业务领域有专业需求
+   - 业务 Lead 1 个（如 quant-lead / pm-researcher）→ 业务领域有专业需求
    - QA 1 个 → 项目开始有 E2E / 压测需求时
    - 其他（DevOps / 新媒体 / 视频）→ YAGNI
 
@@ -668,14 +668,14 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 
 ### 9.1 业务 Lead 与执行专家拆成两个 Agent（ADR-0003）
 
-**症状**：业务 PM 收到量化业务需求 → 转 `quant-pm`（业务 Lead）→ `quant-pm` 转 `4a-architect` → 4A 转 `quant-researcher`（执行）→ 业务 Lead 验收
+**症状**：业务 PM 收到量化业务需求 → 转 `quant-pm`（业务 Lead）→ `quant-pm` 转 `4a-architect` → 4A 转 `quant-lead`（执行）→ 业务 Lead 验收
 
 **问题**：
 - 中间多 1 跳（5 节点）
 - 业务 Lead 不懂技术、懂技术的不管业务，造成**人为割裂**
 - 资深 quant 同时具备业务 Lead 与执行能力，拆开是浪费
 
-**修法**：合并到**一个 Agent**（`quant-researcher`），通过"业务 Lead 模式" vs "执行模式"切换。**6 节点 → 4 节点**。
+**修法**：合并到**一个 Agent**（`quant-lead`），通过"业务 Lead 模式" vs "执行模式"切换。**6 节点 → 4 节点**。
 
 **教训**：评估新 Agent 时，先问"这个角色能不能跟现有 Agent 合并成双角色"。
 

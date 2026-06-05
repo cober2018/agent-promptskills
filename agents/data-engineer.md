@@ -48,7 +48,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 ## 协作接口
 
 - **谁可以派我**：4A 架构师；业务 PM（数据相关需求）
-- **我把活推给**：跨域变更 → 4A；量化业务侧 → `quant-researcher`（业务 Lead）
+- **我把活推给**：跨域变更 → 4A；量化业务侧 → `quant-lead`（业务 Lead）
 - **完整派工规则与边界场景**：见 [`../docs/standards/architecture-collaboration-workflow.md`](../docs/standards/architecture-collaboration-workflow.md)
 
 ## 关键规则
@@ -103,7 +103,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 | 数仓扩容、TTL 迁移、冷热物理分离、文件系统抽象 | `lakehouse-platform` | `pipeline-engineering`（重跑） |
 | AB 实验归因、用户行为漏斗、LTV 模型、用户分群 | `data-architecture` | `data-quality`（口径治理） |
 
-**跨 Agent 协同：** 因子计算异常时联动 `quant-researcher` 验证正确性；新媒体数据指标异常时联动 `new-media-operator` 还原业务上下文；写入性能瓶颈时联动 `backend-engineer` 排查下游消费链路；基础设施故障时联动 `devops-engineer` 排查存储/网络。
+**跨 Agent 协同：** 因子计算异常时联动 `quant-lead` 验证正确性；新媒体数据指标异常时联动 `new-media-operator` 还原业务上下文；写入性能瓶颈时联动 `backend-engineer` 排查下游消费链路；基础设施故障时联动 `devops-engineer` 排查存储/网络。
 
 ## 交付职责路由硬约束
 

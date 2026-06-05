@@ -47,13 +47,13 @@ Step 5. docs/standards/multi-agent-team-      4 分钟   ← 搭建方法论 + 1
 |---|---|---|---|
 | `agents/pm.md` | L1 PMO | **业务 PMO / 需求分流官** | 无 `Agent`（不派工）|
 | `agents/4a-architect.md` | L2 Lead | **4A 架构师 / 技术团队 Lead**（双身份）| 有 `Agent`（派技术 IC）|
-| `agents/quant-researcher.md` | L2 Lead + L3 IC | **业务 Lead 模式 + 执行模式**（双角色合一）| 有 `Agent`（派自己执行模式）|
+| `agents/quant-lead.md` | L2 Lead + L3 IC | **业务 Lead 模式 + 执行模式**（双角色合一）| 有 `Agent`（派自己执行模式）|
 | `agents/backend-engineer.md` | L3 IC | 后端代码 | 无 `Agent` |
 | `agents/frontend-engineer.md` | L3 IC | 前端代码 | 无 `Agent` |
 | `agents/data-engineer.md` | L3 IC | 数据工程 | 无 `Agent` |
 | `agents/qa-engineer.md` | L3 IC | E2E / 压测 / 质量门禁 | 无 `Agent` |
 
-> **派工边界**（硬约束）：4A 派 be/fe/data/qa；quant-researcher 派自己（执行模式）；**永远不跨团队指挥**。
+> **派工边界**（硬约束）：4A 派 be/fe/data/qa；quant-lead 派自己（执行模式）；**永远不跨团队指挥**。
 
 ### 3.2 B 类：Skill（30 个，分 6 层）
 
@@ -62,7 +62,7 @@ Step 5. docs/standards/multi-agent-team-      4 分钟   ← 搭建方法论 + 1
 | 架构层 | 4 | `skills/{business,application,data,technology}-architecture/` | 4A |
 | 工程层 | 4 | `skills/{react-frontend-architecture,api-engineering,database-engineering,system-reliability}/` | be / fe / data |
 | 数据层 | 3 | `skills/{pipeline-engineering,data-quality,lakehouse-platform}/` | data |
-| 量化层 | 3 | `skills/{factor-engineering,factor-mining,backtest-validation}/` | quant-researcher |
+| 量化层 | 3 | `skills/{factor-engineering,factor-mining,backtest-validation}/` | quant-lead |
 | 质量层 | 2 | `skills/{test-evidence,quality-gate}/` | qa |
 | 通用 superpowers | 13 | `skills/{using-superpowers,brainstorming,writing-plans,executing-plans,test-driven-development,systematic-debugging,verification-before-completion,subagent-driven-development,dispatching-parallel-agents,requesting-code-review,receiving-code-review,using-git-worktrees,finishing-a-development-branch,writing-skills}/` | 全员按需 |
 
@@ -97,7 +97,7 @@ Step 5. docs/standards/multi-agent-team-      4 分钟   ← 搭建方法论 + 1
 | `docs/adr/0001-4a-collaboration-baseline.md` | (其他 agent) | 4A 协同基线 |
 | `docs/adr/0002-agent-delivery-responsibility-routing.md` | 其他 agent 写的 | 派工责任分配 |
 | `docs/adr/0002-agent-org-bootstrap.md` | ★ 我们的 | Agent org 初次 bootstrap |
-| `docs/adr/0003-agent-org-pm-naming-correction.md` | ★ 我们的 | PM 命名修正（quant-pm 合并到 quant-researcher）|
+| `docs/adr/0003-agent-org-pm-naming-correction.md` | ★ 我们的 | PM 命名修正（quant-pm 合并到 quant-lead）|
 | `docs/adr/0004+` | 其他 agent 的活 | paper trading / dqc / strategy 等 |
 
 > 我们的 ADR 2 个（0002/0003）；其他 22+ 个是其他 agent 的工作记录。
@@ -131,7 +131,7 @@ Step 5. docs/standards/multi-agent-team-      4 分钟   ← 搭建方法论 + 1
                     │
    ┌────────────────▼────────────────────────────────────────┐
    │  7 Agent 文件（agents/）                       │
-   │  pm.md / 4a-architect.md / quant-researcher.md /     │
+   │  pm.md / 4a-architect.md / quant-lead.md /     │
    │  backend-engineer.md / frontend-engineer.md /          │
    │  data-engineer.md / qa-engineer.md                     │
    └─┬──────────────┬─────────────────┬──────────────────┘
@@ -168,7 +168,7 @@ Step 5. docs/standards/multi-agent-team-      4 分钟   ← 搭建方法论 + 1
 | `architecture-collaboration-workflow.md` | `multi-agent-team-bootstrap.md` | spec §1.2 + §11 引用 |
 | `architecture-collaboration-workflow.md` | `agent-delivery-responsibility-routing.md`, `sandbox-script-field-semantics.md`, `architecture-review-checklist.md`, `AGENT_SCHEDULER_GUIDE.md` | (其他 standards) |
 | `docs/adr/` | `4a-architect.md`, `ROUTING.md`, `multi-agent-team-bootstrap.md` | 引用 ADR 模板 + 边界变更必登记 |
-| `docs/requirements/quant/NNNN-<slug>.md` | `quant-researcher.md` | 量化需求文档落点 |
+| `docs/requirements/quant/NNNN-<slug>.md` | `quant-lead.md` | 量化需求文档落点 |
 | `docs/tasks/` | `multi-agent-team-bootstrap.md`（§立项工作流段）, `check-9step.sh`, `ROUTING.md` | 9 步 plan 模板 + 强制 |
 | `~/.claude/skills/weekly-retro/` | `multi-agent-team-bootstrap.md`（§10） | 配套工具 |
 
@@ -184,7 +184,7 @@ QuantAgents/
 │   ├── agents/                                 ★ 7 Agent
 │   │   ├── pm.md                              ★ L1 PMO
 │   │   ├── 4a-architect.md                    ★ L2 Lead (技术)
-│   │   ├── quant-researcher.md                 ★ L2 Lead (量化) + L3 IC
+│   │   ├── quant-lead.md                 ★ L2 Lead (量化) + L3 IC
 │   │   ├── backend-engineer.md                 ← L3 IC
 │   │   ├── frontend-engineer.md                ← L3 IC
 │   │   ├── data-engineer.md                    ← L3 IC

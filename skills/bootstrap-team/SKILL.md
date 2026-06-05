@@ -88,7 +88,7 @@ mkdir -p <project>/docs/standards <project>/docs/adr
 ```bash
 # 从 cober2018/agent-promptskills 仓库
 SRC=/tmp/agent-promptskills  # 用户需要先 git clone
-for f in pm 4a-architect backend-engineer frontend-engineer data-engineer qa-engineer quant-researcher; do
+for f in pm 4a-architect backend-engineer frontend-engineer data-engineer qa-engineer quant-lead; do
   [ -f "$SRC/agents/$f.md" ] && cp "$SRC/agents/$f.md" "<project>/.agents/agents/$f.md"
 done
 ```

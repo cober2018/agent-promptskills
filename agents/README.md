@@ -18,7 +18,7 @@ agents/
 │   ├── frontend-engineer.md     # 前端专家
 │   ├── data-engineer.md         # 数据工程师
 │   ├── qa-engineer.md           # QA 专家（E2E / 压测 / 质量门禁）
-│   └── quant-researcher.md      # 量化研究员（业务 Lead + 技术执行者双角色）
+│   └── quant-lead.md      # 量化研究员（业务 Lead + 技术执行者双角色）
 └── skills/                      # 30 个 Skill
     ├── 架构层（4）              # business-/application-/data-/technology-architecture
     ├── 工程层（4）              # react-frontend + api + database + system-reliability
@@ -28,11 +28,11 @@ agents/
     └── 通用 superpowers（13）   # brainstorming / writing-plans / tdd / ...
 ```
 
-> 注：早期 bootstrap 曾设独立 `quant-pm` 角色（量化业务侧 PM），已被 ADR-0003 修正为合并到 `quant-researcher`（双角色合一）。
+> 注：早期 bootstrap 曾设独立 `quant-pm` 角色（量化业务侧 PM），已被 ADR-0003 修正为合并到 `quant-lead`（双角色合一）。
 
 ## 一句话使用
 
-> **用户只对 PM 说话；PM 自动派单给 4A / quant-researcher / 专家。**
+> **用户只对 PM 说话；PM 自动派单给 4A / quant-lead / 专家。**
 
 ```
 /pm <你的需求>
@@ -47,7 +47,7 @@ agents/
 | **业务 PM** | 业务侧总入口，需求对齐 + 拆任务 + 派单 | brainstorming, writing-plans, business-architecture(只读) | `/pm` |
 | **量化研究员**（业务 Lead 模式） | 量化业务侧入口，撰写四件套需求文档，4A 评审 | brainstorming, factor-engineering(只读), backtest-validation(只读) | PM 转单 / 用户直找 |
 | **量化研究员**（执行模式） | 因子 / 回测 / IC 评估的执行者 | factor-engineering, factor-mining, backtest-validation | 4A 派回时（仅量化业务） |
-| **4A 架构师** | 跨业务/应用/数据/技术四层架构评审，ADR + 派工 | 4 个 architecture skill, writing-plans | 业务 PM / quant-researcher 派单 |
+| **4A 架构师** | 跨业务/应用/数据/技术四层架构评审，ADR + 派工 | 4 个 architecture skill, writing-plans | 业务 PM / quant-lead 派单 |
 | **后端专家** | Go / FastAPI 后端代码、并发、分布式、API、SQL | api-engineering, database-engineering, system-reliability | 4A 派单 |
 | **前端专家** | React 19 前端架构、状态管理、动效、无障碍 | react-frontend-architecture | 4A 派单 |
 | **数据工程师** | 时序/湖仓/Medallion/ClickHouse 调优/DQC 门禁 | data-architecture, pipeline-engineering, data-quality, lakehouse-platform | 4A 派单 |
@@ -125,8 +125,8 @@ agents/
 
 | 上游 | 可直接派给 | 不可直接派给 |
 |---|---|---|
-| 业务 PM | `quant-researcher`（业务 Lead）、`4a-architect` | 所有专家（backend/frontend/data-engineer/quant-researcher 执行模式） |
-| quant-researcher（业务 Lead） | `4a-architect` | `data-engineer` |
+| 业务 PM | `quant-lead`（业务 Lead）、`4a-architect` | 所有专家（backend/frontend/data-engineer/quant-lead 执行模式） |
+| quant-lead（业务 Lead） | `4a-architect` | `data-engineer` |
 | 4A 架构师 | 任意专家 | — |
 
 跨域变更 100% 触发 ADR（`docs/adr/NNNN-<slug>.md`），由 4A 评审登记。
@@ -139,7 +139,7 @@ agents/
 | [`docs/standards/architecture-collaboration-workflow.md`](../docs/standards/architecture-collaboration-workflow.md) | 4A 协同工作流的权威源（4A 评审清单、ADR 模板） |
 | [`docs/adr/0001-4a-collaboration-baseline.md`](../docs/adr/0001-4a-collaboration-baseline.md) | 4A 治理基线 ADR |
 | [`docs/adr/0002-agent-org-bootstrap.md`](../docs/adr/0002-agent-org-bootstrap.md) | 多 Agent 组织 bootstrap 决策（已被 ADR-0003 部分修正） |
-| [`docs/adr/0003-agent-org-pm-naming-correction.md`](../docs/adr/0003-agent-org-pm-naming-correction.md) | quant-pm 命名修正（合并到 quant-researcher） |
+| [`docs/adr/0003-agent-org-pm-naming-correction.md`](../docs/adr/0003-agent-org-pm-naming-correction.md) | quant-pm 命名修正（合并到 quant-lead） |
 | `AGENTS.md` | 项目级 AI 协作规则（含 Canonical Directories 划分） |
 | `CLAUDE.md` | 项目级 Claude 配置 |
 

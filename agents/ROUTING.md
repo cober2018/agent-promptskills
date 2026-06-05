@@ -19,7 +19,7 @@
                   ┌──────────────────┴──────────────────┐
                   ▼                                     ▼
       ┌──────────────────────────┐    ┌──────────────────────────┐
-      │ quant-researcher         │    │ 4a-architect 4A 架构师   │
+      │ quant-lead         │    │ 4a-architect 4A 架构师   │
       │ (量化业务侧 Lead /       │    │  - §3 五条硬约束自检     │
       │  量化技术执行者)         │    │  - ADR + 派工            │
       │  - 量化需求立项           │    │  - 单一事实源声明         │
@@ -41,15 +41,15 @@
 ## 2. 派工硬约束
 
 > **任何派工动作必须先经过对应领域的 Lead / 架构师评审。**
-> 业务 PM **不直接**派 `backend-engineer` / `frontend-engineer` / `data-engineer` / `quant-researcher`（执行模式）。
-> quant-researcher（业务 Lead 模式）**不直接**派 `data-engineer`；必须经 `4a-architect` 评审。
+> 业务 PM **不直接**派 `backend-engineer` / `frontend-engineer` / `data-engineer` / `quant-lead`（执行模式）。
+> quant-lead（业务 Lead 模式）**不直接**派 `data-engineer`；必须经 `4a-architect` 评审。
 > 唯一例外：4A 架构师在评审后可直接派工给具体专家。
 
 | 上游 | 可直接派给 | 不可直接派给 |
 |---|---|---|
-| 业务 PM | `quant-researcher`（业务 Lead 模式）、`4a-architect` | 所有专家（backend/frontend/data-engineer/qa-engineer/quant-researcher 执行模式） |
-| quant-researcher（业务 Lead 模式） | `4a-architect` | `data-engineer` |
-| 4a-architect | 任意专家（含 backend/frontend/data-engineer/qa-engineer/quant-researcher 执行模式） | — |
+| 业务 PM | `quant-lead`（业务 Lead 模式）、`4a-architect` | 所有专家（backend/frontend/data-engineer/qa-engineer/quant-lead 执行模式） |
+| quant-lead（业务 Lead 模式） | `4a-architect` | `data-engineer` |
+| 4a-architect | 任意专家（含 backend/frontend/data-engineer/qa-engineer/quant-lead 执行模式） | — |
 
 ## 3. 触发 ADR 的边界变更（4A 评审门禁）
 
@@ -103,7 +103,7 @@
 
 ## 5. 量化业务需求四件套
 
-quant-researcher（业务 Lead 模式）派单时，需求文档必含：
+quant-lead（业务 Lead 模式）派单时，需求文档必含：
 
 | 四件套 | 内容 |
 |---|---|
@@ -144,16 +144,16 @@ quant-researcher（业务 Lead 模式）派单时，需求文档必含：
   - 完成后自审 + requesting-code-review
 ```
 
-### 例 2：量化业务 → 业务 PM → quant-researcher（业务 Lead）→ 4A → quant-researcher（执行模式）
+### 例 2：量化业务 → 业务 PM → quant-lead（业务 Lead）→ 4A → quant-lead（执行模式）
 
 ```
 用户：「我要个小市值反转因子」
 ↓
 业务 PM：
   - 类型：量化业务
-  - 派给 quant-researcher（业务 Lead 模式）
+  - 派给 quant-lead（业务 Lead 模式）
 ↓
-quant-researcher（业务 Lead）：
+quant-lead（业务 Lead）：
   - brainstorming 1 关键问题（持仓周期 / 品种池 / 是否含 ST）
   - 撰写四件套（数据契约 / 因子假设 / 回测方案 / 验收标准）
   - 派给 4a-architect 评审
@@ -161,14 +161,14 @@ quant-researcher（业务 Lead）：
 4A：
   - §3 自检（数据 → 应用跨域 → 触发 ADR）
   - 评审四件套
-  - 派回 quant-researcher（执行模式，写因子 / 回测代码）
+  - 派回 quant-lead（执行模式，写因子 / 回测代码）
 ↓
-quant-researcher（执行模式）：
+quant-lead（执行模式）：
   - 用 factor-engineering / backtest-validation
   - 偏误防御先行
   - 完成后 IC 评估 + 报告
 ↓
-quant-researcher（业务 Lead 验收）：
+quant-lead（业务 Lead 验收）：
   - 看 IC、Sharpe、回撤
   - 达标 → 归档
 ```
