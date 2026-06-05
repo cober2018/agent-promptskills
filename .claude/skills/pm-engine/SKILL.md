@@ -1,12 +1,13 @@
 ---
 name: pm-engine
-description: PM 引擎路由开关 — 手动控制 4A 架构师与前端 Agent 的 AI 提供者（CC / Codex / Gemini / Antigravity）。状态持久化到 .claude/engine-config.json。
-version: 1.0.0
+description: PM 引擎路由开关 — 手动控制 4A 架构师与前端 Agent 的 AI 提供者（CC / Codex / Gemini / Antigravity）。交互式菜单选择，状态持久化到 .claude/engine-config.json。
+version: 2.0.0
 allowed-tools:
   - Bash
   - Read
   - Write
   - Edit
+  - AskUserQuestion
 ---
 
 # /pm-engine — 派工引擎路由开关
@@ -22,34 +23,70 @@ allowed-tools:
 | `gemini` | `gemini -p --yolo "<prompt>"` | 前端 |
 | `agy` | `agy --dangerously-skip-permissions --print "<prompt>"` | 前端（Antigravity） |
 
-> **关于 YOLO 模式**：3 个外部引擎（codex / gemini / agy）默认都有工具授权拦截（write_file / run_shell_command 等）。派工时必须带 YOLO 标志跳过拦截，否则引擎只能"打印建议"无法落盘。YOLO 标志的副作用：引擎拥有完整文件写权限 + 命令执行权限；建议只在受信任的 e2e 探针或 sandbox 任务中使用。
+> **关于 YOLO 模式**：3 个外部引擎（codex / gemini / agy）默认都有工具授权拦截。派工时必须带 YOLO 标志跳过拦截，否则引擎只能"打印建议"无法落盘。建议只在受信任的 sandbox / e2e 探针任务中使用。
 
-## 用法
+## 交互流程
 
-```
-/pm-engine <role> <engine>     # 设置某角色使用的引擎
-/pm-engine status              # 查看当前配置
-/pm-engine reset               # 全部切回 cc 默认
-```
+被调用时按以下 4 步执行（**不要跳步**）：
 
-### 示例
+### Step 1 — 读取并显示当前配置
 
-```
-/pm-engine 4a codex            # 4A 架构师派工走 Codex
-/pm-engine 4a cc               # 4A 切回 CC 默认
-/pm-engine frontend gemini     # 前端 Agent 走 Gemini
-/pm-engine frontend agy        # 前端 Agent 走 Antigravity
-/pm-engine frontend cc         # 前端切回 CC 默认
-/pm-engine status              # 查看所有角色当前引擎
-/pm-engine reset               # 全部切回 cc
+```bash
+bash .claude/skills/pm-engine/route.sh status
 ```
 
-## 支持的角色
+**展示规则**：先打印当前状态（用 `route.sh status` 的输出原文），再继续 Step 2。如果配置文件不存在，明确告诉用户"全部角色默认 cc"。
 
-| role 关键字 | 角色 | 可选引擎 |
+### Step 2 — 用 AskUserQuestion 询问"操作类型"
+
+**问题**：「你要做什么？」
+
+**4 个选项（4 选 1）**：
+
+| 选项目（label）| 描述（description）| value |
 |---|---|---|
-| `4a` / `architect` | 4A 架构师（技术团队 Lead）| `cc`、`codex` |
-| `frontend` / `fe` | 前端 Agent | `cc`、`gemini`、`agy` |
+| 切换 4A 架构师引擎 | 修改 4A 派工时使用的 AI 引擎 | `set-4a` |
+| 切换前端 Agent 引擎 | 修改前端派工时使用的 AI 引擎 | `set-frontend` |
+| 全部切回 cc 默认 | 重置 4A 与前端都为 CC | `reset` |
+| 只查看当前配置 | 不修改，只看 | `view` |
+
+**用 `AskUserQuestion` 调用，header 写 "操作"**。
+
+### Step 3 — 二级路由（**无 LLM 决策**）
+
+收到 Step 2 的答案后，**立即**按下面条件分支，**不要输出任何中间文字**：
+
+| Step 2 答案 | 动作 |
+|---|---|
+| `set-4a` | **立即**调 AskUserQuestion 问「4A 架构师用哪个引擎？」（header: "4A 引擎"，2 选 1：`cc` / `codex`）|
+| `set-frontend` | **立即**调 AskUserQuestion 问「前端 Agent 用哪个引擎？」（header: "前端引擎"，3 选 1：`cc` / `gemini` / `agy`）|
+| `reset` | **立即**执行 `bash .claude/skills/pm-engine/route.sh reset`，输出原文，结束本轮 |
+| `view` | **立即**再跑一次 `bash .claude/skills/pm-engine/route.sh status`（或直接复用 Step 1 输出），结束本轮 |
+
+**绝对禁止**：在 Step 2 答案与 Step 3 弹窗之间写任何分析、说明、解释。LLM 在这一步只做"看答案 → 弹下一题"的路由，不做思考。
+
+### Step 4 — 应用设置（仅 set-4a / set-frontend 走）
+
+根据 Step 3 收集到的 `<engine>`，执行：
+
+```bash
+bash .claude/skills/pm-engine/route.sh <role> <engine>
+```
+
+`<role>` 已在 Step 2 选定（`set-4a` → `4a`，`set-frontend` → `frontend`）。
+
+示例：用户选 `set-4a` + `codex` → 执行 `bash .claude/skills/pm-engine/route.sh 4a codex`
+
+### Step 5 — 确认
+
+展示 `route.sh` 的输出（已包含新配置 + 路径），结束本轮 skill。**不要再追加任何"下一步"或额外说明文字。**
+
+## 支持的角色与引擎矩阵
+
+| 角色 | 可选引擎 |
+|---|---|
+| 4A 架构师 | `cc`、`codex` |
+| 前端 Agent | `cc`、`gemini`、`agy` |
 
 ## 状态文件
 
@@ -62,20 +99,20 @@ allowed-tools:
 }
 ```
 
-- 文件不存在时，全部角色默认 `cc`
-- 文件存在但某 role 缺失时，缺失角色默认 `cc`
+- 文件不存在 → 全部角色默认 `cc`
+- 某 role 字段缺失 → 该 role 默认 `cc`
 - 修改后立即生效，新派单走新引擎
 
-## 实现要点（仅供维护者参考）
+## 实现细节（仅供维护者参考）
 
-1. 用户调用 `/pm-engine <role> <engine>`
-2. 校验 role 和 engine 合法性
-3. 读/写 `.claude/engine-config.json`
-4. 输出当前配置 + 下一步操作建议
+- `route.sh` 是状态管理后端；SKILL.md 是用户流程前端
+- 菜单用 `AskUserQuestion` 工具，禁止让用户手敲命令
+- 改配置后必须展示新状态，让用户看到变化
+- 4A / 前端 agent 定义里有「引擎路由」段，读 config 决定走哪条路
 
 ## 配套改动
 
-使用本 skill 后，`.claude/agents/4a-architect.md` 与 `.claude/agents/frontend-engineer.md`
+使用本 skill 后，`.agents/agents/4a-architect.md` 与 `.agents/agents/frontend-engineer.md`
 需要在派工逻辑里加一段规则：派工前先读 `.claude/engine-config.json`，
 按配置决定走 `Agent()` 还是 CLI 引擎。
 
