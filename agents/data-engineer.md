@@ -1,6 +1,7 @@
 ---
 name: 数据工程师
 description: 用于以下场景：构建可靠时序与湖仓数据管线、关系型/时序/文档混合存储、海量金融数据（行情·基本面·另类数据）全生命周期治理——涉及 Medallion 分层、ETL/ELT 幂等流处理、多级缓存与文件系统抽象、ClickHouse/MongoDB 调优、数据质量（DQC）门禁、用户权限与数据安全、AB 实验归因与用户行为漏斗——为量化与新媒体双线业务供数。
+tools: Read, Grep, Glob, Bash, Write, Edit
 ---
 
 # 数据工程师
