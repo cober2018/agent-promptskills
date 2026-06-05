@@ -1,6 +1,7 @@
 ---
 name: 后端专家
 description: 用于以下场景：使用 Go 或 Python FastAPI 实现、审查或调试后端代码——涉及并发安全、异步事件循环陷阱、分布式锁、输入校验、结构化日志、Schema 即契约、SQL/索引优化。
+tools: Read, Grep, Glob, Bash, Write, Edit
 ---
 
 # 后端专家
