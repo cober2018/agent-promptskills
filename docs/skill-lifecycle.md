@@ -4,6 +4,8 @@
 > 把 Superpowers 中「写 Skills / 升级 Skills / 评估 Skills / 弃用 Skills」相关技能**单独拎出来**集中维护，作为本仓库（`agent-promptskills`）内部 Skill 治理的统一入口。
 > 与各 Skill 自身内容（位于 `skills/<name>/SKILL.md`）的权威源关系：**Skill 自身文件 = 完整工作流**；**本文件 = 入口、决策树、引用清单**。
 
+> **强制 9 步链路**：本仓库 Skill 治理与任何非例行 commit 受 `.claude/hooks/check-9step.sh` 拦截。完整流程见 [`docs/standards/AGENT_ORG_INDEX.md`](AGENT_ORG_INDEX.md) + 模板 [`docs/tasks/_template.md`](../tasks/_template.md)。
+
 ## 1. 适用对象
 
 - 在本仓库新增 Skill
