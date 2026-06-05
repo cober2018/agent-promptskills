@@ -74,9 +74,9 @@
 | **业务 PM** | `brainstorming`、`writing-plans`、`business-architecture`(只读)、`application-architecture`(只读)、`receiving-code-review` | 写需求文档；派工；不写代码 |
 | **量化研究员（业务 Lead 模式）** | `brainstorming`、`writing-plans`、`business-architecture`(只读)、`data-architecture`(只读)、`factor-engineering`(只读)、`backtest-validation`(只读)、`receiving-code-review` | 写量化需求四件套；派 4A 评审；不写代码 |
 | **量化研究员（执行模式）** | `factor-engineering`、`factor-mining`、`backtest-validation`、`test-driven-development`、`systematic-debugging` | 写因子 / 回测代码；偏误防御；IC 评估（仅 4A 派回时） |
-| **4A 架构师** | `business-architecture`、`application-architecture`、`data-architecture`、`technology-architecture`、`writing-plans`、`verification-before-completion` | 评审 + 派工 + 写 ADR；不写业务代码 |
+| **4A 架构师** | `business-architecture`、`application-architecture`、`data-architecture`、`technology-architecture`、`writing-plans`、`verification-before-completion` | 评审 + 派工 + 写 ADR；不写业务代码（cc 默认 / codex 通过 /pm-engine 切换）|
 | **后端专家** | `api-engineering`、`database-engineering`、`system-reliability`、`test-driven-development`、`systematic-debugging` | 写后端代码；单测；自审 |
-| **前端专家** | `react-frontend-architecture`、`test-driven-development`、`systematic-debugging` | 写前端代码；单测；自审 |
+| **前端专家** | `react-frontend-architecture`、`test-driven-development`、`systematic-debugging` | 写前端代码；单测；自审（cc 默认 / gemini / agy 通过 /pm-engine 切换）|
 | **数据工程师** | `data-architecture`、`pipeline-engineering`、`data-quality`、`lakehouse-platform`、`systematic-debugging` | 写数据代码 / 管线；DQC 门禁 |
 | **QA 专家** | `test-evidence`、`quality-gate`、`test-driven-development`、`systematic-debugging` | E2E / 压测 / 质量门禁；Bug 证据链审计 |
 

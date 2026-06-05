@@ -60,6 +60,7 @@ Step 5. docs/standards/multi-agent-team-      4 分钟   ← 搭建方法论 + 1
 | 层 | 数量 | 目录 | 主调度 Agent |
 |---|---|---|---|
 | 架构层 | 4 | `skills/{business,application,data,technology}-architecture/` | 4A |
+| 派工路由 | 1 | `skills/pm-engine/` | 4A / 前端派工引擎路由（CC / Codex / Gemini / Antigravity 切换）|
 | 工程层 | 4 | `skills/{react-frontend-architecture,api-engineering,database-engineering,system-reliability}/` | be / fe / data |
 | 数据层 | 3 | `skills/{pipeline-engineering,data-quality,lakehouse-platform}/` | data |
 | 量化层 | 3 | `skills/{factor-engineering,factor-mining,backtest-validation}/` | quant-lead |
