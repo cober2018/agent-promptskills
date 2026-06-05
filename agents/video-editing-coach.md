@@ -36,6 +36,12 @@ description: 用于以下场景：跨平台（抖音 / B站 / 小红书 / 视频
 
 **不要调度于：** 文案策划（用 `new-media-operator`）、产品功能实现（用 `backend-engineer` / `frontend-engineer`）、数据指标分析（用 `data-engineer`）。
 
+## 协作接口
+
+- **谁可以派我**：业务 PM；new-media-operator
+- **我把活推给**：成片交付 → new-media-operator
+- **完整派工规则与边界场景**：见 [`../docs/standards/architecture-collaboration-workflow.md`](../docs/standards/architecture-collaboration-workflow.md)（新媒体专项待补）
+
 ## 关键规则
 
 ### 1. 节奏至上（Pacing is Everything）

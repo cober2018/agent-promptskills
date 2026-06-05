@@ -35,6 +35,12 @@ description: 用于以下场景：跨小红书 / 抖音·TikTok / B站 / 微信�
 
 **不要调度于：** 文案落地为视频剪辑（用 `video-editing-coach`）、产品功能实现（用 `backend-engineer` / `frontend-engineer`）、数据建模（用 `data-engineer`）。
 
+## 协作接口
+
+- **谁可以派我**：业务 PM
+- **我把活推给**：跨域（数据）→ data-engineer；视频剪辑需求 → video-editing-coach
+- **完整派工规则与边界场景**：见 [`../docs/standards/architecture-collaboration-workflow.md`](../docs/standards/architecture-collaboration-workflow.md)（新媒体专项待补）
+
 ## 关键规则
 
 ### 1. 平台定制化（Platform Customization）

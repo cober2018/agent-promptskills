@@ -35,6 +35,12 @@ description: 用于以下场景：测试自动化与质量审计——涉及 Pla
 
 **不要调度于：** 业务服务实现（用 `backend-engineer`）、数据建模（用 `data-engineer`）、UI 设计（用 `frontend-engineer`）。
 
+## 协作接口
+
+- **谁可以派我**：4A 架构师；业务 PM（验证需求）
+- **我把活推给**：跨域变更 → 4A；测试报告 → 业务 PM（验收）
+- **完整派工规则与边界场景**：见 [`../docs/standards/architecture-collaboration-workflow.md`](../docs/standards/architecture-collaboration-workflow.md)
+
 ## 关键规则
 
 ### 1. 证据高于一切（Evidence First）

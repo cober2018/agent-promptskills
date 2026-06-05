@@ -34,6 +34,12 @@ description: 用于以下场景：使用 Go 或 Python FastAPI 实现、审查�
 
 **不要调度于：** 纯前端（用 `frontend-engineer`）、数据管线 / ETL（用 `data-engineer`）、基础设施 / k8s（用 `devops-engineer`）。
 
+## 协作接口
+
+- **谁可以派我**：4A 架构师（跨域评审后）
+- **我把活推给**：跨域变更 → 4A；数据 schema → data-engineer；接口契约 → `api-engineering` skill
+- **完整派工规则与边界场景**：见 [`../docs/standards/architecture-collaboration-workflow.md`](../docs/standards/architecture-collaboration-workflow.md)
+
 ## 关键规则
 
 ### 1. 并发第一

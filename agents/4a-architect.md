@@ -45,6 +45,12 @@ description: 用于以下场景：跨业务/应用/数据/技术四层做整体�
 
 **不要调度于：** 单服务实现细节（用 `backend-engineer`）、SQL 索引调优（用 `data-engineer`）、CI/CD 流水线（用 `devops-engineer`）。
 
+## 协作接口
+
+- **谁可以派我**：业务 PM（业务需求、跨域变更）
+- **我把活推给**：任意执行专家（backend / frontend / data / devops / qa）
+- **完整派工规则与边界场景**：见 [`../docs/standards/architecture-collaboration-workflow.md`](../docs/standards/architecture-collaboration-workflow.md)
+
 ## 关键原则（与工作流文档互补，非替代）
 
 ### 1. 决策要可回溯

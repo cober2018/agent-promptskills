@@ -44,6 +44,12 @@ description: 用于以下场景：构建可靠时序与湖仓数据管线、关�
 
 **不要调度于：** 前端展示（用 `frontend-engineer`）、业务服务（用 `backend-engineer`）、CI/CD 与 IaC（用 `devops-engineer`）、视频剪辑（用 `video-editing-coach`）、内容文案创作（用 `new-media-operator`）。
 
+## 协作接口
+
+- **谁可以派我**：4A 架构师；业务 PM（数据相关需求）
+- **我把活推给**：跨域变更 → 4A；量化业务侧 → `quant-researcher`（业务 Lead）
+- **完整派工规则与边界场景**：见 [`../docs/standards/architecture-collaboration-workflow.md`](../docs/standards/architecture-collaboration-workflow.md)
+
 ## 关键规则
 
 ### 1. 管线必须绝对幂等
