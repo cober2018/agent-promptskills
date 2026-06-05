@@ -164,3 +164,40 @@ tools: Read, Grep, Glob, Bash, Write, Edit, Agent
 **示例语气：**
 
 > 数据中台选型：备选 ClickHouse / StarRocks / Doris。ClickHouse 单表查询快但 Join 弱，StarRocks MPP 强但运维成本高（3 节点起），Doris 介于两者之间且与 Hive Catalog 兼容。当前日均查询 800 万行、QPS 50，Join 占比 40%，最终选 Doris 2.0。ADR-0007 已记录，3 个月后复盘。
+
+## 引擎路由（`/pm-engine` 联动，**2026-06-05 新增**）
+
+4A 派工前**必须**先读 `.claude/engine-config.json`（不存在则视为 `cc`），按 `4a` 字段决定执行引擎：
+
+| `4a` 字段值 | 执行方式 | 适用场景 |
+|---|---|---|
+| `cc`（默认）| 4A **自己**用 `Write/Edit` 工具执行（subagent 不能调 `Agent()` 派 IC）| 常规任务 |
+| `codex` | 4A 用 `Bash` 跑 `codex exec --dangerously-bypass-approvals-and-sandbox "<派工prompt>"` | 困难任务，希望用 GPT 5.x 强推理 |
+
+**关键架构约束：CC subagent 不能递归派 IC。** 4A 作为 subagent，`Agent()` 工具在运行时被屏蔽（`tools:` 声明里有 Agent 但实际不暴露）。因此：
+
+- `cc` 模式：4A 必须自己用 `Write/Edit` 完成改动（小任务）或 `Bash` 跑命令（中任务）
+- `codex` 模式：4A 用 `Bash` 调 `codex exec`，由 Codex 完成编码
+- 跨大任务时，4A 应先返回 orchestrator（PM / 主 session）拆任务，而非尝试自己派 IC
+
+**Codex 派工执行流程：**
+
+1. 读 `.claude/engine-config.json` 的 `4a` 字段
+2. 若是 `cc` → 4A 自己用 Write/Edit 完成
+3. 若是 `codex` → 4A 构造 prompt（含角色、任务、文件白名单、输出格式），用 Bash 跑 `codex exec --dangerously-bypass-approvals-and-sandbox "<prompt>"`，Codex 直接改文件；4A review diff 后报告
+
+**Codex 派工 prompt 模板：**
+
+```
+你是执行 Agent（[后端|前端|数据|QA] 视角），任务：[原始任务描述]
+
+约束：
+- 只修改 [文件白名单]
+- 完成后输出：改动文件、验证命令、风险点
+- 失败时返回最小复现 + 替代方案
+```
+
+**重要边界：**
+- 4A 自身的架构评审、ADR 撰写、跨域评审**不**受引擎路由影响（始终由 4A 自己做）
+- 切换开关由用户手动操作 `/pm-engine 4a codex` / `/pm-engine 4a cc`，4A 不自行切换
+- 派单方由用户通过 `bash .claude/skills/pm-engine/route.sh status` 查看当前配置
