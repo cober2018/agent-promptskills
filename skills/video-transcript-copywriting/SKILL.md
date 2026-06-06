@@ -1,6 +1,7 @@
 ---
 name: 视频字幕提取与文案加工
-description: 从音视频文件提取 SRT 字幕或生成清洗润色后的 MD 全文文案。两种输出：带时间轴的字幕文件（SRT）和无时间轴的纯文本文案（Markdown）。
+description: 从音视频文件提取 SRT 字幕或生成清洗润色后的 MD 全文文案。两种输出：带时间轴的字幕文件（SRT）和无时间轴的纯文本文案（Markdown）。调用本地 ASR 工具（路径由 `OPC_ASR_DIR` 环境变量指定，默认 `~/Project/opc-asr`）。
+version: 1.1.0
 ---
 
 # 视频字幕提取与文案加工
@@ -13,6 +14,8 @@ description: 从音视频文件提取 SRT 字幕或生成清洗润色后的 MD �
 | :--- | :--- | :--- |
 | **SRT 字幕** | 带时间轴的字幕文件，适用于视频配字幕 | `output/srt/` |
 | **MD 文案** | 全文无损清洗与润色后的纯文本，无时间轴 | `output/md/` |
+
+**ASR 工具路径约定**：调用方必须设置 `OPC_ASR_DIR` 环境变量指向 ASR 项目根（默认 `~/Project/opc-asr`）。所有命令模板用 `${OPC_ASR_DIR}` 占位。
 
 ## 何时使用
 
@@ -58,12 +61,15 @@ which ffmpeg
 ### 2. 执行命令
 
 ```bash
-cd /Users/mshengran/Project/opc-asr
+# ASR 工具根目录（设置一次，复用到所有命令）
+export OPC_ASR_DIR="${OPC_ASR_DIR:-$HOME/Project/opc-asr}"
 
-# SRT 字幕（带时间轴）→ output/srt/{文件名}.srt
+cd "${OPC_ASR_DIR}"
+
+# SRT 字幕（带时间轴）→ ${OPC_ASR_DIR}/output/srt/{文件名}.srt
 python -m scripts.asr "/path/to/video.mp4" --language zh --model turbo
 
-# MD 全文文案（清洗润色，无时间轴）→ output/md/{文件名}.md
+# MD 全文文案（清洗润色，无时间轴）→ ${OPC_ASR_DIR}/output/md/{文件名}.md
 python -m scripts.asr "/path/to/video.mp4" --language zh --model turbo --format md
 ```
 
