@@ -119,7 +119,24 @@ macro_factors = {
 # Composite score = sum(values) / len(values) = +0.2 → neutral to mildly bullish
 ```
 
+### Steps for Qualitative Causal Mapping
+
+When performing qualitative macro research, the agent must **spawn 3 parallel sub-agents** to investigate distinct dimensions and map their intersections:
+- **Sub-agent A (Macro-Policy)**: Investigates central bank policies, exchange rate changes, and regulatory interventions.
+- **Sub-agent B (Industry-Events)**: Investigates industry TAM space, CR4/CR8 concentration cycles, and corporate catalyst events.
+- **Sub-agent C (Cost-Transmission)**: Investigates upstream raw materials, futures pricing curves, and corporate hedging/套保 indicators.
+
+#### Verified Causal Chains (因果传导链)
+The agent **must verify at least 3** of the following transmission links to connect qualitative variables:
+1. **Macro → Materials → Margins**: Central bank rates change $\rightarrow$ commodity index shifts $\rightarrow$ raw material costs change $\rightarrow$ gross margin sensitivity.
+2. **Policy → Industry → Market Share**: Policy changes (subsidies/bans) $\rightarrow$ sector TAM changes $\rightarrow$ industry concentration shift $\rightarrow$ firm market share.
+3. **Events → Valuation Shifts**: Subsidiary wins a contract/R&D breakthrough $\rightarrow$ SOTP (Sum of the Parts) valuation update $\rightarrow$ stock re-rating.
+4. **Futures → Earnings volatility**: Hedging position (multi/short) $\rightarrow$ futures contract price fluctuation $\rightarrow$ non-operating gains/losses.
+5. **Macro → Local Government → Cash Flow**: Central bank tightening/real estate pressure $\rightarrow$ local government budget deficits $\rightarrow$ accounts receivable surging $\rightarrow$ operating cash flow deterioration.
+6. **Industry Consolidation → Firm positioning**: Mergers & acquisitions cycle $\rightarrow$ top players consolidation $\rightarrow$ firm target/arbitrage value.
+
 ## Output Format
+
 
 ```
 ## Macro Analysis Report

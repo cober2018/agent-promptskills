@@ -1,5 +1,5 @@
 #!/bin/bash
-# PreToolUse hook for Bash tool: enforce CLAUDE.md 9-step chain.
+# PreToolUse hook for Bash tool: enforce CLAUDE.md 10-step chain.
 #
 # Blocks `git commit` for non-routine messages unless a plan file
 # exists in docs/tasks/ (any *.md file counts as proof of task tracking).
@@ -42,17 +42,17 @@ fi
 # Block: no plan found
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 cat >&2 <<EOF
-9-step chain not satisfied: docs/tasks/ is empty.
+10-step chain not satisfied: docs/tasks/ is empty.
 
 Before coding, create docs/tasks/${BRANCH}.md (or any *.md) with
-9-step checklist per CLAUDE.md:
-  1. writing-plans          6. /qa
-  2. /autoplan              7. code-review
-  3. subagent-driven-dev    8. /ship
-  4. TDD                    9. /cso
-  5. systematic-debugging
+10-step checklist per CLAUDE.md:
+  1. brainstorming          6. systematic-debugging
+  2. writing-plans          7. /qa
+  3. /autoplan              8. code-review
+  4. subagent-driven-dev    9. /ship
+  5. TDD                   10. /cso
 
 Bypass for routine cases: git commit --no-verify -m "..."
 EOF
-echo '{"permissionDecision":"deny","message":"9-step chain not satisfied: docs/tasks/ is empty. See stderr."}'
+echo '{"permissionDecision":"deny","message":"10-step chain not satisfied: docs/tasks/ is empty. See stderr."}'
 exit 0

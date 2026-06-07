@@ -118,29 +118,30 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 
 > 在 Firefox 跨端兼容性回归测试中，发现当列表页项目数超过 100 时，前端未对详情卡片组件配置 `contain: content` CSS 属性，导致浏览器触发冗余布局计算，页面滚动帧率掉至 32 FPS。Performance 面板火焰图和复现录屏已附在 Bug #142 中，定位到组件路径 `components/ProjectCard.tsx:128`。建议前端专家修复。
 
-## Dispatch 协议（2026-06-07 新增）
+## Dispatch 协议（QA 视角，2026-06-07 修订）
 
 > **权威源**：`docs/dispatch/PROTOCOL.md`
 
-QA Agent 启动后**第一件事**：用 Glob 查 `docs/dispatch/*.md`，找 `status=review` 的派工包（不查 pending / in_progress——那是 IC 干的事）。
+QA Agent 是 **review 阶段 IC**——启动后 Glob 查 `docs/dispatch/*.md` → 找 `status=review AND layer=L2` 的派工包（不查 pending / in_progress——那是 IC 干的事）。
 
-**QA 验收动作**：
+### QA 验收 4 步
 
-1. Read 派工包 + 关联 artifact（commit hash / API 路径 / 报告）
-2. **真实验证**（不**只**信 pytest mock）：
+1. **校验**：`status=review` ✅ / `layer=L2` ✅ / `artifact` 非空 ✅
+2. Read 派工包 + 关联 artifact（commit hash / API 路径 / 报告）
+3. **真实验证**（不**只**信 pytest mock）：
    - 跑真实环境 e2e（`/browse` 或 curl 真服务）
-   - 检查日志 5min 观察窗（**不**只查单测通过）
+   - 检查日志 5min 观察窗
    - 跑 Locust 压测（如涉及 API）
-3. 改 frontmatter：`status: review → done`（通过）或 `status: review → blocked`（有 bug）
-4. 在"进度日志"加一行：`[qa] 验收通过 / [qa] 发现 bug #N`
+4. 改 frontmatter：`status: review → done`（通过）或 `status: review → blocked`（有 bug）
 
-**不**做的事：
+### 硬约束
 
-- ❌ 不在 dispatch md 里写完整 QA 报告（QA 报告写到 `docs/qa/<id>.md`）
-- ❌ 不接 `status=pending` 的包（pending 是 IC 的活，QA 不越界）
-- ❌ 不删 dispatch md（PM 维护）
-
-**重要边界**：
-
-- 验收结论以"真实 e2e 跑通"为准，**不**以"5/5 pytest 全过"为准
+- ✅ 必查 `status=review` 的 own 派工包（启动第一件事）
+- ✅ 必跑真实环境 e2e（不只 pytest）
+- ✅ 验收结论以"真实 e2e 跑通"为准，**不**以"5/5 pytest 全过"为准
+- ❌ **不**接 `status=pending` / `status=in_progress` 的派工包（越界）
+- ❌ **不**接 `layer=L1` 的派工包（4A / Lead 内部评审，不归 QA）
+- ❌ **不**在 dispatch md 里写完整 QA 报告（写到 `docs/qa/<id>.md`）
+- ❌ **不**删 dispatch md（PM 维护）
+- 阻塞 → 改 `status=blocked` + 写 bug 清单 + 升级 Lead / PM
 - 任何 dispatch md 显式列了 "PM 真实 e2e" 必填项的，QA 必须帮 PM 跑真实 e2e

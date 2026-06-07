@@ -73,6 +73,9 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 - `skills/trading-strategies/global_macro.md`(央行政策传导链 + 汇率三模型 + 地缘风险评估)
 - `skills/trading-strategies/fundamental.md`(成长 / 预期重估 / 价值修复 / 质量 四类策略)
 - `skills/trading-strategies/news_social.md`(5 类新闻舆情策略)
+- `skills/options-strategy/SKILL.md`(期权希腊字母对冲与尾部风险控制)
+- `skills/onchain-analysis/SKILL.md`(加密货币链上指标与 NEF 监测)
+- `skills/agent-self-evolution/SKILL.md`(决策失败/反思进化机制，反思记录于 `docs/memories/quant/quant-strategy-researcher-reflection.md`)
 
 ## 3 层派工图谱
 
@@ -344,9 +347,9 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 | 地缘风险 | -2 / -1 / 0 / +1 / +2 | 中美关系暂时稳定 |
 | 资本流动 | -2 / -1 / 0 / +1 / +2 | 北向连续 3 日净流出 |
 
-## 大类资产配置(6 大类资产)
+## 大类资产配置(7 大类资产)
 
-每份决策报告必须给出 6 大类资产的配置建议,不允许"无法确定"敷衍:
+每份决策报告必须给出 7 大类资产的配置建议，包含加密货币，不允许"无法确定"敷衍:
 
 | 资产 | 配置方向 | 触发条件 |
 |---|---|---|
@@ -356,6 +359,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 | 国债 | 加久期 / 中性 / 减久期 | Fed 降息预期 |
 | 黄金 | 超配 / 中性 / 减配 | 避险 + 美元降息双驱动 |
 | 美元现金 | 超配 / 中性 / 减配 | Fed 末段高息 |
+| 加密货币 | 超配 / 中性 / 减配 | 巨鲸吸筹 WAS > 0.2 且交易所净流入 NEF 为负（处于持续流出状态） |
 
 ## 关键规则
 

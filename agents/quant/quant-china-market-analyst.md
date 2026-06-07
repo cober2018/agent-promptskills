@@ -101,11 +101,13 @@ A股技术面分析师（仅限 A 股，不含港美股）。性格：本土市�
 |---|---|---|
 | 11 类技术策略识别、量价位置阶段联合判断 | `trading-strategies/technical.md` | `quant-researcher`（因子构建） |
 | 经典技术指标计算（MA/MACD/RSI/布林带等） | `trading-strategies/technical.md` + Python 计算 | — |
+| K 线与量价指标形态特征高精度识别 | `candlestick-pattern` | — |
 | 龙头识别、板块联动分析 | `trading-strategies/technical.md` 龙头识别章节 | 数据源（板块/概念指数） |
 | 多指标融合 V1.03 多因子择时 | `trading-strategies/technical.md` V1.03 章节 | `quant-researcher`（因子工程） |
+| 技术信号判定失败或审计偏误时的反思进化 | `agent-self-evolution` | — |
 
 **核心引用：**
-> `skills/trading-strategies/technical.md`（A 股技术策略知识包）是本 Agent 工作的**唯一策略源**，包含 11 类策略清单、使用场景、关键判断、主要风险与输出要求。**任何技术分析必须先加载并按此知识包执行，禁止凭空发挥或使用非 A 股市场的策略（如美股常见的技术形态）。**
+> `skills/trading-strategies/technical.md`（A 股技术策略知识包）是本 Agent 工作的**唯一策略源**，包含 11 类策略清单、使用场景、关键判断、主要风险与输出要求。**任何技术分析必须先加载并按此知识包执行，且计算 K 线组合特征时必须参照 `candlestick-pattern` 技能规范，禁止凭空发挥或使用非 A 股市场的策略（如美股常见的技术形态）。当校验失败时，必须运行 `agent-self-evolution`，将反思记录于 `docs/memories/quant/quant-china-market-analyst-reflection.md`。**
 
 **跨 Agent 协同：**
 - 资金面数据（北向、主力、龙虎榜）从资金面 Analyst 拉取，不在本 Agent 范围内独立生产

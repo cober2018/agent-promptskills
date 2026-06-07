@@ -1,6 +1,6 @@
 # Agent-PromptSkills：专业级 AI Agent 与 Skill 提示词工程体系
 
-> **构建人机协同的高阶数字化生产力骨架。** 本仓库集成 **11 个核心专业级 AI Agent 角色**（含业务 PMO / 推进官、4A 架构师、量化 Lead + 4 个研究领域 Agent）与 **45+ 个高度适配、开箱即用的配套 Skill 配置文件**，外加 `/pm` 命令入口、9 步推进链路 hook、3 份组织治理 ADR 与 4 份 standards 权威源，形成工业级的全生命周期软件开发与量化投研设计规范。
+> **构建人机协同的高阶数字化生产力骨架。** 本仓库集成 **11 个核心专业级 AI Agent 角色**（含业务 PMO / 推进官、4A 架构师、量化 Lead + 4 个研究领域 Agent）与 **45+ 个高度适配、开箱即用的配套 Skill 配置文件**，外加 `/pm` 命令入口、**10 步标准生命周期 + 派工体系 2.0（L1/L2 级联 + dispatch md 落盘）** hook、3 份组织治理 ADR 与 4 份 standards 权威源，形成工业级的全生命周期软件开发与量化投研设计规范。
 
 ---
 
@@ -8,16 +8,18 @@
 
 - 导航：[`docs/standards/AGENT_ORG_INDEX.md`](docs/standards/AGENT_ORG_INDEX.md) —— 5 类文件清单 + 启动顺序 + 引用关系图
 - 派工权威源：[`agents/ROUTING.md`](agents/ROUTING.md) —— 派工硬约束 + Agent × Skill 路由矩阵
-- 团队搭建方法论：[`docs/standards/multi-agent-team-bootstrap.md`](docs/standards/multi-agent-team-bootstrap.md) —— 13 步 bootstrap 流程 + 5 个 prompt 模板 + 9 步推进机制
+- 团队搭建方法论：[`docs/standards/multi-agent-team-bootstrap.md`](docs/standards/multi-agent-team-bootstrap.md) —— 13 步 bootstrap 流程 + 5 个 prompt 模板 + **10 步标准生命周期** 推进机制
 - 4A 治理：[`docs/standards/architecture-collaboration-workflow.md`](docs/standards/architecture-collaboration-workflow.md)
 - 派工引擎路由：[`.claude/skills/pm-engine/SKILL.md`](.claude/skills/pm-engine/SKILL.md) —— 4A / 前端切换 CC / Codex / Gemini / Antigravity
 
-### /pm 命令与 9 步推进链路
+### /pm 命令与 10 步推进链路（**派工体系 2.0：L1/L2 级联**）
 
 - `/pm` 入口：[`.claude/commands/pm.md`](.claude/commands/pm.md) —— 业务侧唯一对话接口，激活 PMO 推进官模式
-- 9 步推进机制：详见 [`docs/standards/multi-agent-team-bootstrap.md` §3.4](docs/standards/multi-agent-team-bootstrap.md) —— PM 持续催每个子任务的 9 步 owner，催 / 卡 / 升级三动作贯穿子任务生命周期
-- 9 步 PreToolUse 拦截：[`.claude/hooks/check-9step.sh`](.claude/hooks/check-9step.sh) —— 非例行 git commit 强制要求 `docs/tasks/<branch>.md` 含 9 步 checklist
-- 9 步 plan 模板：[`docs/tasks/_template.md`](docs/tasks/_template.md)
+- **10 步标准生命周期**：brainstorming → 拆分 L1 派工 → writing-plans → /autoplan → 派 L2 → TDD → debugging → /qa → code-review → /ship & /cso
+- **L1/L2 派工**：详见 [`docs/dispatch/PROTOCOL.md`](docs/dispatch/PROTOCOL.md) —— PM 派 L1 给 Lead 写方案 → Lead 落 `docs/solutions/<id>.md` → PM 派 L2 给 IC（**必填** `solution_ref`）
+- 派工 4 动作 + 状态链：详见 [`docs/standards/agent-delivery-responsibility-routing.md` §8](docs/standards/agent-delivery-responsibility-routing.md)
+- 10 步 PreToolUse 拦截：[`.claude/hooks/check-9step.sh`](.claude/hooks/check-9step.sh) —— 非例行 git commit 强制要求 `docs/tasks/<branch>.md` 含 10 步 checklist
+- 10 步 plan 模板：[`docs/tasks/_template.md`](docs/tasks/_template.md)
 
 ### 派工引擎路由（4A / 前端，v2.0 交互式菜单）
 
@@ -164,7 +166,7 @@ graph TD
 
 | Agent 角色 | 核心职责与使命 | 绑定的专项 Skill |
 | :--- | :--- | :--- |
-| **[🧭 业务 PMO / 推进官](./agents/pm.md)** | 业务侧唯一入口，3 角色合一：PMO 进度跟踪 + 需求分流官 + 推进官（持续催 9 步进度 / 卡时升级 / 跨 Lead 协调） | `brainstorming`, `writing-plans`, `business-architecture`(只读) |
+| **[🧭 业务 PMO / 推进官](./agents/pm.md)** | 业务侧唯一入口，3 角色合一：PMO 进度跟踪 + **需求分流与派工官**（L1 派 Lead / L2 派 IC）+ 推进官（持续催 10 步进度 / 卡时升级 / 跨 Lead 协调） | `brainstorming`, `writing-plans`, `business-architecture`(只读) |
 | **[📈 量化 Lead](./agents/quant-lead.md)** | 量化业务侧 Lead（写四件套 → 派 4A 评审）+ 因子工程执行者（4A 派回时写因子 / 回测 / IC 评估）| `factor-engineering`, `backtest-validation`, `factor-mining` |
 | **[🏛️ 4A 架构师](./agents/4a-architect.md)** | 站在业务与技术交汇点，进行顶层数字化骨架设计与协同智能体统帅 | `business-architecture`, `application-architecture`, `data-architecture`, `technology-architecture` |
 | **[🎨 前端专家](./agents/frontend-engineer.md)** | React / UI-UX 资深架构师，专精 React 19 生态、高保真视觉效果与 View Transitions 流畅动效 | `react-frontend-architecture` |
@@ -293,6 +295,11 @@ graph TD
 | [factor-engineering](./skills/factor-engineering/SKILL.md) | 因子分类、向量化、MAD 去极值、IC 评估 | 量化研究员 |
 | [factor-mining](./skills/factor-mining/SKILL.md) | AI 节点工作流、ML 非线性特征、复合因子 | 量化研究员 |
 | [backtest-validation](./skills/backtest-validation/SKILL.md) | A 股 T+1、涨跌停、四大偏误、滑点建模 | 量化研究员 |
+| [quant-alpha-zoo](./skills/quant-alpha-zoo/SKILL.md) | 经典 Alpha 因子库数学公式、Pandas 向量化计算标准 | 量化研究员 |
+| [candlestick-pattern](./skills/candlestick-pattern/SKILL.md) | K 线实体影线特征量化、20 种形态高精度识别 | 量化研究员 |
+| [earnings-revision](./skills/earnings-revision/SKILL.md) | 分析师一致预期修正比例、超预期幅度 (SUE) 财报分析 | 量化研究员 |
+| [options-strategy](./skills/options-strategy/SKILL.md) | BS 期权定价模型、希腊字母 (Greeks) 对冲策略 | 量化策略研究员 |
+| [onchain-analysis](./skills/onchain-analysis/SKILL.md) | 加密货币交易所净流量 (NEF)、巨鲸持仓、TVL 监测 | 量化策略研究员 |
 | [trading-strategies/](./skills/trading-strategies/) | 6 个策略知识包（基本面/技术/舆情/裁决/风控交易/全球宏观），5 角色量化团队必读 | 量化团队 5 角色 |
 
 ### 🛡️ 质量与运维层
@@ -337,14 +344,16 @@ graph TD
 | [using-git-worktrees](./skills/using-git-worktrees/SKILL.md) | 使用 Git Worktree 独立开发，保持主工作区干净 | 多任务并行、分支隔离 |
 | [finishing-a-development-branch](./skills/finishing-a-development-branch/SKILL.md) | 研发分支合并、测试用例回归与临时分支清理 | 功能开发合并时 |
 | [writing-skills](./skills/writing-skills/SKILL.md) | 编写与迭代 AI Agent 专项 Skill 的最佳实践 | 自定义 Skill 扩充 |
+| [swarm-dag-orchestration](./skills/swarm-dag-orchestration/SKILL.md) | 多智能体 Swarm 团队配置与 Task DAG 工作流有向图编排 | 量化与复合业务派工时 |
+| [agent-self-evolution](./skills/agent-self-evolution/SKILL.md) | 智能体回测/评估失败后的反思与规避指令自适应优化 | 校验失败被拒或指标不达标时 |
 
 ### 📋 流程与治理辅助层
 
 | 文件 | 用途 | 适用场景 |
 | :--- | :--- | :--- |
 | [`.claude/commands/pm.md`](.claude/commands/pm.md) | `/pm` 命令入口 | 用户所有需求的第一承接点 |
-| [`.claude/hooks/check-9step.sh`](.claude/hooks/check-9step.sh) | 9 步链路 PreToolUse 拦截 hook | 非例行 git commit 强制要求 plan 文件 |
-| [`docs/tasks/_template.md`](docs/tasks/_template.md) | 9 步 plan 模板 | 复制 → 填具体内容 → 按 9 步推进 |
+| [`.claude/hooks/check-9step.sh`](.claude/hooks/check-9step.sh) | 10 步链路 PreToolUse 拦截 hook | 非例行 git commit 强制要求 plan 文件 |
+| [`docs/tasks/_template.md`](docs/tasks/_template.md) | 10 步 plan 模板 | 复制 → 填具体内容 → 按 10 步推进 |
 
 ### 🏗️ 团队搭建层
 

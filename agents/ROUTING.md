@@ -14,18 +14,20 @@
                                      ▼
                           ┌──────────────────────┐
                           │  PM 业务 PM（入口）    │  /pm
+                          │  L1 派工（派 Lead）    │
+                          │  L2 派工（派 IC，核心）│
                           └──────────┬───────────┘
                                      ▼
                   ┌──────────────────┴──────────────────┐
                   ▼                                     ▼
       ┌──────────────────────────┐    ┌──────────────────────────┐
       │ quant-lead         │    │ 4a-architect 4A 架构师   │
-      │ (量化业务侧 Lead /       │    │  - §3 五条硬约束自检     │
-      │  量化技术执行者)         │    │  - ADR + 派工            │
-      │  - 量化需求立项           │    │  - 单一事实源声明         │
-      │  - 撰写四件套             │    │                          │
-      │  - 派 4A 评审             │    │                          │
-      │  - 4A 派回时执行因子代码  │    │                          │
+      │ (L1: 业务 Lead 模式)     │    │  (L1: 技术团队 Lead)     │
+      │  - 量化需求立项           │    │  - 写方案 + assignments  │
+      │  - 撰写四件套             │    │  - ADR + 评审            │
+      │  - 派 4A 评审             │    │  - 不直接派 IC           │
+      │  (L2: 执行模式)           │    │                          │
+      │  - 因子 / 回测代码执行    │    │                          │
       └──────────┬───────────────┘    └─────────────┬────────────┘
                  │                                  │
                  └────────────────┬─────────────────┘
@@ -33,23 +35,43 @@
       ┌──────────┬──────────┬──────────┬──────────┬──────────┐
       ▼          ▼          ▼          ▼          ▼          ▼
   backend    frontend    data-eng   quant-rs   qa-eng    (devops /
-  -engineer  -engineer   -engineer  (executor) -engineer new-media / video
-                                          ↑                          未装)
-                                  4A 派回时执行
+  -engineer  -engineer   -engineer  (L2 IC)    -engineer new-media / video
+  (L2 IC)    (L2 IC)     (L2 IC)              (L2 IC)  未装)
+       ↑ PM 按 Lead 方案 assignments 数组 1 对 1 写 L2 dispatch md 派发
 ```
 
-## 2. 派工硬约束
+## 2. 派工硬约束（**2026-06-07 修订：L1/L2 级联派工**）
 
-> **任何派工动作必须先经过对应领域的 Lead / 架构师评审。**
-> 业务 PM **不直接**派 `backend-engineer` / `frontend-engineer` / `data-engineer` / `quant-lead`（执行模式）。
-> quant-lead（业务 Lead 模式）**不直接**派 `data-engineer`；必须经 `4a-architect` 评审。
-> 唯一例外：4A 架构师在评审后可直接派工给具体专家。
+> **核心**：派工 = L1（PM 派 Lead 写方案）→ L2（PM 派 IC 执行，**必填** `solution_ref`）。
+> 详见 [`docs/dispatch/PROTOCOL.md`](../docs/dispatch/PROTOCOL.md)。
 
-| 上游 | 可直接派给 | 不可直接派给 |
+### 派工级联（**PM 派 IC 是核心**）
+
+| 派工层级 | 派工方 | 接收方 | 必填字段 |
+|---|---|---|---|
+| **L1**（方案层）| PM | Lead（4a-architect / quant-lead / `<domain>`）| `owner=Lead` + `layer=L1` + `solution_ref=null` |
+| **L2**（执行层）| PM | IC（backend-engineer / frontend-engineer / data-engineer / qa-engineer / `<IC>`）| `owner=IC` + `layer=L2` + `solution_ref=<path>`（**必填**）|
+
+### 派工硬约束
+
+- ✅ **PM 派 L1**：粗探查后写 L1 dispatch md（`layer=L1`），派 Lead 做方案
+- ✅ **PM 派 L2**：Lead 写完方案（`docs/solutions/<id>.md`）→ PM 校验 → 写 L2 dispatch md（`layer=L2`），**必填** `solution_ref`
+- ✅ **L1 → L2 必经** `solution_ready` + `ready_to_dispatch` 两个状态
+- ❌ **不**让 Lead 私派 IC（派工必须经 PM 派 L2，可追溯）
+- ❌ **不**跳过方案校验直接派 L2
+- ❌ **不**用 `TaskUpdate(owner=...)` 当派工通知（必须用 dispatch md）
+- ❌ **不**改 `done` 跳过真实 e2e 三件套（`[lead] 评审通过` + `[pm] 真实 e2e 通过`）
+
+### Lead 4 件套（替代旧"自派 IC"）
+
+| # | 动作 | 产出 |
 |---|---|---|
-| 业务 PM | `quant-lead`（业务 Lead 模式）、`4a-architect` | 所有专家（backend/frontend/data-engineer/qa-engineer/quant-lead 执行模式） |
-| quant-lead（业务 Lead 模式） | `4a-architect` | `data-engineer` |
-| 4a-architect | 任意专家（含 backend/frontend/data-engineer/qa-engineer/quant-lead 执行模式） | — |
+| 1 | 接单调研 | 摸清现状 / 风险 / 依赖 |
+| 2 | 写方案 | `docs/solutions/<id>.md`（含 `assignments` 数组）|
+| 3 | 评审 IC | 评审 commit 是否符合方案 |
+| 4 | 兜底 | IC 失败/越界时接管 |
+
+**Lead 永远不直接派 IC**——只写方案 + 评审 + 兜底。L2 派工由 PM 按 `assignments` 写 dispatch md 派给 IC。
 
 ## 3. 触发 ADR 的边界变更（4A 评审门禁）
 
@@ -71,18 +93,18 @@
 
 | Agent | 调用的 Skill（主用） | 调用权限 |
 |---|---|---|
-| **业务 PM** | `brainstorming`、`writing-plans`、`business-architecture`(只读)、`application-architecture`(只读)、`receiving-code-review` | 写需求文档；派工；不写代码 |
-| **量化研究员（业务 Lead 模式）** | `brainstorming`、`writing-plans`、`business-architecture`(只读)、`data-architecture`(只读)、`factor-engineering`(只读)、`backtest-validation`(只读)、`receiving-code-review` | 写量化需求四件套；派 4A 评审；不写代码 |
-| **量化研究员（执行模式）** | `factor-engineering`、`factor-mining`、`backtest-validation`、`test-driven-development`、`systematic-debugging` | 写因子 / 回测代码；偏误防御；IC 评估（仅 4A 派回时） |
+| **业务 PM** | `brainstorming`、`writing-plans`、`swarm-dag-orchestration`、`business-architecture`(只读)、`application-architecture`(只读)、`receiving-code-review` | 写需求文档；派工；Swarm DAG 编排 |
+| **量化研究员（业务 Lead 模式）** | `brainstorming`、`writing-plans`、`swarm-dag-orchestration`(只读)、`business-architecture`(只读)、`data-architecture`(只读)、`factor-engineering`(只读)、`backtest-validation`(只读)、`receiving-code-review` | 写量化需求四件套；派 4A 评审；不写代码 |
+| **量化研究员（执行模式）** | `factor-engineering`、`factor-mining`、`backtest-validation`、`quant-alpha-zoo`、`earnings-revision`、`candlestick-pattern`、`options-strategy`、`onchain-analysis`、`agent-self-evolution`、`test-driven-development`、`systematic-debugging` | 写因子 / 回测代码；偏误防御；IC 评估；自进化反思（仅 4A 派回时） |
 | **4A 架构师** | `business-architecture`、`application-architecture`、`data-architecture`、`technology-architecture`、`writing-plans`、`verification-before-completion` | 评审 + 派工 + 写 ADR；不写业务代码（cc 默认 / codex 通过 /pm-engine 切换）|
 | **后端专家** | `api-engineering`、`database-engineering`、`system-reliability`、`test-driven-development`、`systematic-debugging` | 写后端代码；单测；自审 |
 | **前端专家** | `react-frontend-architecture`、`test-driven-development`、`systematic-debugging` | 写前端代码；单测；自审（cc 默认 / gemini / agy 通过 /pm-engine 切换）|
 | **数据工程师** | `data-architecture`、`pipeline-engineering`、`data-quality`、`lakehouse-platform`、`systematic-debugging` | 写数据代码 / 管线；DQC 门禁 |
 | **QA 专家** | `test-evidence`、`quality-gate`、`test-driven-development`、`systematic-debugging` | E2E / 压测 / 质量门禁；Bug 证据链审计 |
 
-**全局过程规范**（不挂到具体 Agent，按需调用）：
+**全局与量化过程规范**（按需调用）：
 
-| Skill | 适用阶段 |
+| Skill | 适用阶段 / 核心能力 |
 |---|---|
 | `using-superpowers` | 启动任何任务时 |
 | `brainstorming` | 需求对齐、方案讨论前 |
@@ -100,6 +122,13 @@
 | `writing-skills` | 自定义 Skill 扩充 |
 | `skill-health` | Skill 健康度检查 |
 | `pruning-skills` | 清理过期 Skill |
+| `swarm-dag-orchestration` | 量化智能体 Swarm 团队配置与 DAG 工作流编排 |
+| `agent-self-evolution` | 智能体回测/评估失败后的反思与规避指令自适应优化 |
+| `quant-alpha-zoo` | WorldQuant 101/191 等因子库数学公式及 Pandas 向量化标准 |
+| `candlestick-pattern` | K 线实体影线数学特征及 20 种经典形态量化识别 |
+| `earnings-revision` | 卖方分析师一致预期修正比例与财报超预期幅度 (SUE) 分析 |
+| `options-strategy` | BS 期权定价模型、希腊字母 (Greeks) 风险对冲组合设计 |
+| `onchain-analysis` | 交易所流入流出 (NEF)、巨鲸筹码与 TVL 链上数据监测 |
 
 ## 5. 量化业务需求四件套
 
@@ -124,24 +153,32 @@ quant-lead（业务 Lead 模式）派单时，需求文档必含：
 
 ## 6. 派工示例
 
-### 例 1：业务需求 → 业务 PM → 4A → 后端
+### 例 1：业务需求 → 业务 PM → 4A（L1）→ PM（L2）→ 后端
 
 ```
 用户：「我要加个新接口，POST /v1/orders，下单」
 ↓
-业务 PM：
+业务 PM（L1 派工）：
   - 类型：技术/编码
-  - 派给 4a-architect 评审
+  - 写 L1 dispatch md: layer=L1, owner=4a-architect
 ↓
-4A：
+4A（L1 接单调研）：
   - §3 自检（API 涉及服务边界 → 触发 ADR）
   - 写 ADR docs/adr/NNNN-rest-orders-api.md
-  - 派给 backend-engineer
+  - 写方案 docs/solutions/<id>.md（assignments=[{ic: backend-engineer, task: ...}]）
+  - L1 status → solution_ready
 ↓
-后端：
+业务 PM（校验方案 + L2 派工）：
+  - 校验方案 → 改 L1 status=ready_to_dispatch
+  - 写 L2 dispatch md: layer=L2, owner=backend-engineer, solution_ref=<path>
+↓
+后端（L2 接单执行）：
+  - 校验 solution_ref 非空 + 必读方案
   - 用 api-engineering / database-engineering
   - TDD：先写测试
-  - 完成后自审 + requesting-code-review
+  - 完成后改 status=review + 填 artifact
+↓
+4A 评审 → 业务 PM 跑真实 e2e → 改 done
 ```
 
 ### 例 2：量化业务 → 业务 PM → quant-lead（业务 Lead）→ 4A → quant-lead（执行模式）
@@ -173,34 +210,34 @@ quant-lead（业务 Lead 验收）：
   - 达标 → 归档
 ```
 
-### 例 3：E2E/压测需求 → 业务 PM → 4A → qa-engineer
+### 例 3：E2E/压测需求 → 业务 PM → 4A（L1）→ PM（L2×2）→ 后端 + qa
 
 ```
 用户：「加个新接口 POST /v1/orders，要 E2E + 压测」
 ↓
-业务 PM：
+业务 PM（L1 派工）：
   - 类型：技术/编码 + 质量验证
-  - 派给 4a-architect 评审
+  - 写 L1 dispatch md: layer=L1, owner=4a-architect
 ↓
-4A：
+4A（L1 写方案）：
   - §3 自检（API 涉及服务边界 → 触发 ADR）
-  - 评审接口设计
-  - 派给 backend-engineer 实现 + 派给 qa-engineer 设计 E2E / 压测
+  - 写方案 docs/solutions/<id>.md
+  - assignments=[{ic: backend-engineer, task: 接口实现}, {ic: qa-engineer, task: E2E + 压测}]
 ↓
-backend-engineer：
-  - 用 api-engineering 实现
-  - TDD：先写测试
-  - 完成后自审
+业务 PM（派 L2 × 2）：
+  - 校验方案 → L1 status=ready_to_dispatch
+  - 写 L2 dispatch md × 2（分别派 backend-engineer + qa-engineer）
 ↓
-qa-engineer：
+backend-engineer（L2）：
+  - 用 api-engineering 实现 → TDD → 改 status=review
+↓
+qa-engineer（L2）：
   - 用 test-evidence / quality-gate
   - Playwright E2E 覆盖主流程
   - Locust 压测，p99 < 200ms
   - 出 Bug 证据链 / 质量评级（A/B/C/D）
 ↓
-4A 验收：
-  - 收集后端 + QA 报告
-  - ADR 关闭 / 进入下个 sprint
+4A 评审 → 业务 PM 跑真实 e2e → 改 done
 ```
 
 ## 7. 维护规则

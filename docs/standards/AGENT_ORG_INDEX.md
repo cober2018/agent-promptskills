@@ -87,8 +87,8 @@ Step 5. docs/standards/multi-agent-team-      4 分钟   ← 搭建方法论 + 1
 | `.claude/agents → ../agents/` | **软链**，让 CC auto-discover 自定义 Agent |
 | `.claude/commands/pm.md` | `/pm` 命令入口（用户唯一对话接口）|
 | `.claude/hooks/check-gstack.sh` | (existing) gstack 必装检查 |
-| `.claude/hooks/check-9step.sh` | **★ 本 session 落地**——9 步链路 commit 阶段硬拦截 |
-| `docs/tasks/_template.md` | 9 步 plan 文件模板（PM 接到需求第一步拷这个）|
+| `.claude/hooks/check-9step.sh` | **★ 本 session 落地**——10 步链路 commit 阶段硬拦截 |
+| `docs/tasks/_template.md` | 10 步 plan 文件模板（PM 接到需求第一步拷这个）|
 
 ### 3.5 E 类：决策记录（ADR）
 
@@ -153,7 +153,7 @@ Step 5. docs/standards/multi-agent-team-      4 分钟   ← 搭建方法论 + 1
    └─────────────────────┘    └────────────────────────┘
 
    skills/ 30 个   ← 各 Agent 调用的 skill（主用）
-   docs/tasks/_template.md  ← 9 步 plan 模板
+   docs/tasks/_template.md  ← 10 步 plan 模板
    .claude/hooks/check-9step.sh  ← 拦 git commit
    .claude/settings.json  ← 注册 hook + teammateMode=auto
 
@@ -170,7 +170,7 @@ Step 5. docs/standards/multi-agent-team-      4 分钟   ← 搭建方法论 + 1
 | `architecture-collaboration-workflow.md` | `agent-delivery-responsibility-routing.md`, `sandbox-script-field-semantics.md`, `architecture-review-checklist.md`, `AGENT_SCHEDULER_GUIDE.md` | (其他 standards) |
 | `docs/adr/` | `4a-architect.md`, `ROUTING.md`, `multi-agent-team-bootstrap.md` | 引用 ADR 模板 + 边界变更必登记 |
 | `docs/requirements/quant/NNNN-<slug>.md` | `quant-lead.md` | 量化需求文档落点 |
-| `docs/tasks/` | `multi-agent-team-bootstrap.md`（§立项工作流段）, `check-9step.sh`, `ROUTING.md` | 9 步 plan 模板 + 强制 |
+| `docs/tasks/` | `multi-agent-team-bootstrap.md`（§立项工作流段）, `check-9step.sh`, `ROUTING.md` | 10 步 plan 模板 + 强制 |
 | `~/.claude/skills/weekly-retro/` | `multi-agent-team-bootstrap.md`（§10） | 配套工具 |
 
 ---
@@ -220,7 +220,7 @@ QuantAgents/
 │   │   ├── 0003-agent-org-pm-naming-correction.md  ★ 我们的
 │   │   └── 0001 / 0004-0014                     (其他)
 │   ├── tasks/
-│   │   └── _template.md                         ★ 9 步 plan 模板
+│   │   └── _template.md                         ★ 10 步 plan 模板
 │   ├── requirements/                            (PM 产出的需求文档落点)
 │   ├── operations/                              (运维文档)
 │   ├── strategy/                                (量化策略文档)

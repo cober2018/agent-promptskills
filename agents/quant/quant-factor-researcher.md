@@ -311,14 +311,16 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 
 | 任务 | 主调用 | 必要时再调用 |
 |---|---|---|
-| A 股财务数据获取、三张表、估值指标 | `trading-strategies/fundamental.md` | `basic_financial_analyzer`(取数) |
+| A 股财务数据获取、三张表、估值指标 | `trading-strategies/fundamental.md`、`earnings-revision` | `basic_financial_analyzer`(取数) |
+| 经典与特色因子设计与向量化计算 | `quant-alpha-zoo` | `factor-engineering` |
 | 成长 / 预期重估 / 价值修复 / 质量 四类策略判定 | `trading-strategies/fundamental.md` | `quant-strategy-researcher`(策略裁决) |
 | 行业政策、监管、国企改革、周期价格 | `trading-strategies/fundamental.md` | `quant-strategy-researcher`(宏观背景) |
 | 多头 5 维因子视角论据 | `trading-strategies/fundamental.md` | `factor-engineering` |
 | 空头 5 维因子视角论据 | `trading-strategies/fundamental.md` | `backtest-validation` |
 | 财务数据异常时核查数据源 | `basic_financial_analyzer` | `data-engineer`(ClickHouse 财务数仓) |
+| 回测不达标或审计失败时的反思进化 | `agent-self-evolution` | — |
 
-**强制引用:** 本 Agent **必须**显式加载并应用 `skills/trading-strategies/fundamental.md` 知识包中定义的四类策略清单与输出要求,作为生成报告的策略基线。
+**强制引用:** 本 Agent **必须**显式加载并应用 `skills/trading-strategies/fundamental.md` 知识包中定义的四类策略清单与输出要求，以及 `quant-alpha-zoo`（因子计算规范）与 `earnings-revision`（预期上修修正），作为生成报告的策略与代码实现基线。当校验失败时，必须运行 `agent-self-evolution`，将反思记录于 `docs/memories/quant/quant-factor-researcher-reflection.md`。
 
 **跨 Agent 协同:**
 - 与 `quant-china-market-analyst` 交叉验证:技术面信号是否得到因子支持 / 反对

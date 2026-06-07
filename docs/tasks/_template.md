@@ -1,6 +1,6 @@
 # Task Plan Template
 
-> **用途**：复制此文件 → `docs/tasks/<branch-name>.md`，按 9 步 checklist 逐项打勾。
+> **用途**：复制此文件 → `docs/tasks/<branch-name>.md`，按 10 步 checklist 逐项打勾。
 > **强制要求**（CLAUDE.md）：任何非例行 commit（feature / fix / refactor）前必须建本文件，否则 `git commit` 会被 ``.claude/hooks/check-9step.sh`` 拦截。
 
 ---
@@ -25,19 +25,20 @@
 
 ---
 
-## 9 步 Checklist（每步必须显式打勾才算走完）
+## 10 步 Checklist（每步必须显式打勾才算走完，**2026-06-07 修订：brainstorming 加为步 1**）
 
 | # | 步骤 | 必走 Skill / 命令 | 状态 | 完成时间 | 备注 |
 |---|---|---|---|---|---|
-| 1 | **writing-plans** 写计划 | superpowers:writing-plans | ☐ | | 写 docs/plans/<id>.md |
-| 2 | **/autoplan** 多视角审查 | gstack:/autoplan（调 Codex + Gemini 审） | ☐ | | 计划获批才能进 #3 |
-| 3 | **subagent-driven-development** 编码 | superpowers:subagent-driven-development | ☐ | | |
-| 4 | **TDD** 验证（单测/集成） | superpowers:test-driven-development | ☐ | | |
-| 5 | **systematic-debugging** 调试（如需） | superpowers:systematic-debugging | ☐ | | |
-| 6 | **/qa** 真实环境验证 | gstack:/qa | ☐ | | |
-| 7 | **code-review** 代码审查 | superpowers:requesting-code-review | ☐ | | |
-| 8 | **/ship** 发布 | gstack:/ship | ☐ | | |
-| 9 | **/cso** 安全审计 | gstack:/cso | ☐ | | 发布前 |
+| 1 | **brainstorming** 需求粗调研 | superpowers:brainstorming | ☐ | | 输出粗调研报告 |
+| 2 | **writing-plans** 写计划 | superpowers:writing-plans | ☐ | | 写 docs/solutions/<id>.md（Lead 写）|
+| 3 | **/autoplan** 多视角审查 | gstack:/autoplan（调 Codex + Gemini 审） | ☐ | | 计划获批才能进 #4 |
+| 4 | **subagent-driven-development** 编码 | superpowers:subagent-driven-development | ☐ | | PM 按方案 assignments 派 L2 |
+| 5 | **TDD** 验证（单测/集成） | superpowers:test-driven-development | ☐ | | |
+| 6 | **systematic-debugging** 调试（如需） | superpowers:systematic-debugging | ☐ | | |
+| 7 | **/qa** 真实环境验证 | gstack:/qa | ☐ | | |
+| 8 | **code-review** 代码审查 | superpowers:requesting-code-review | ☐ | | |
+| 9 | **/ship** 发布 | gstack:/ship | ☐ | | |
+| 10 | **/cso** 安全审计 | gstack:/cso | ☐ | | 发布前 |
 
 ---
 
