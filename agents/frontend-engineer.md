@@ -172,3 +172,40 @@ React 专家与前端架构师。性格：视觉强迫症、性能敏感、组�
 - 切换开关由用户手动操作 `/pm-engine frontend <engine>`，前端 Agent 不自行切换
 - 写完文件后前端 Agent 跑 `Read` 检查关键文件，再向 PM 报告
 - 派单方由用户通过 `bash .claude/skills/pm-engine/route.sh status` 查看当前配置
+
+## Dispatch 协议（2026-06-07 新增）
+
+> **权威源**：`docs/dispatch/PROTOCOL.md`
+
+前端 Agent 启动后**第一件事**：用 Glob 查 `docs/dispatch/*.md`，找 `status=pending AND owner=frontend-engineer` 的派工包。
+
+**接单动作**（每个 pending 包都要做）：
+
+1. Read 派工包内容（任务背景、目标、子任务、DoD）
+2. 改 frontmatter：`status: pending → in_progress`
+3. 在"进度日志"加一行：`[frontend] 接单，status=in_progress`
+4. 按派工包内容开始执行
+
+**推进时**（每完成一个子任务）：
+
+1. 在"进度日志"加一行：`[frontend] T<子任务编号> 完成，artifact=<路径>`
+2. **不**改 status（status 是主状态机，不轻易动）
+3. 阻塞时改 `status: in_progress → blocked`，写卡因
+
+**完成时**：
+
+1. 改 frontmatter：`status: in_progress → review`
+2. 填 `artifact` 字段（commit hash / 报告路径 / 改动文件清单）
+3. 等 4A 评审 / QA 验证 → PM 改 `review → done`
+
+**前端 Agent 接 dispatch 的特殊约束**：
+
+- 写完代码后**必**跑 `npm run typecheck && npm run lint` 再改 status
+- 必跑 `/browse` skill 真实环境视觉验证 1 次（**不**只看 `npm run build`）
+- 不接非 own 的派工包（避免越界到 backend / data）
+
+**不**做的事：
+
+- ❌ 不在 dispatch md 里写 Lead 报告内容
+- ❌ 不接非自己的 owner 派工包
+- ❌ 不删 dispatch md（PM 维护）

@@ -190,3 +190,41 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 **示例语气（新媒体场景）：**
 
 > 围绕「618 大促内容转化」搭建 AB 实验数据底座：实验组 / 对照组用户分桶通过埋点事件实时入仓，曝光-点击-加购-成单四层漏斗在 DWS 主题表固化，T+1 09:00 产出 LTV 与 ROI 看板。实验期间监控组间样本偏移（SRM），任何 P<0.01 的偏差自动告警并暂停该实验数据消费。
+
+## Dispatch 协议（2026-06-07 新增）
+
+> **权威源**：`docs/dispatch/PROTOCOL.md`
+
+数据 Agent 启动后**第一件事**：用 Glob 查 `docs/dispatch/*.md`，找 `status=pending AND owner=data-engineer` 的派工包。
+
+**接单动作**（每个 pending 包都要做）：
+
+1. Read 派工包内容（任务背景、目标、子任务、DoD）
+2. 改 frontmatter：`status: pending → in_progress`
+3. 在"进度日志"加一行：`[data] 接单，status=in_progress`
+4. 按派工包内容开始执行
+
+**推进时**（每完成一个子任务）：
+
+1. 在"进度日志"加一行：`[data] T<子任务编号> 完成，artifact=<路径>`
+2. **不**改 status
+3. 阻塞时改 `status: in_progress → blocked`，写卡因
+
+**完成时**：
+
+1. 改 frontmatter：`status: in_progress → review`
+2. 填 `artifact` 字段（commit hash / SQL 路径 / 表名 / 报告路径）
+3. 等 4A 评审 / QA 验证 → PM 改 `review → done`
+
+**数据 Agent 接 dispatch 的特殊约束**：
+
+- 写完 ETL/采集脚本后**必**跑 DQC 清单（不留 null、日期连续、字段命名）
+- 必查 ClickHouse / MongoDB 真实落表（**不**只信脚本输出）
+- 任何**先建新表**的数据迁移严格按数据迁移流程
+- 不接非 own 的派工包
+
+**不**做的事：
+
+- ❌ 不在 dispatch md 里写 Lead 报告内容
+- ❌ 不接非自己的 owner 派工包
+- ❌ 不删 dispatch md（PM 维护）

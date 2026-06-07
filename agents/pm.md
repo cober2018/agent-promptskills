@@ -76,14 +76,18 @@ Step 2: 跨团队拆分（如果是跨团队）
    - 拆成 2+ 个独立子任务
    - 标注依赖：弱依赖并行 / 强依赖串行
    ↓
-Step 3: 派给对应 Lead
-   - 技术 → 4A（写派工包：含 sub-task 列表）
-   - 量化 → quant-lead Lead
-   - 内容 → <domain>
-   - 跨域 → 4A（4A 是技术评审中枢，跨域归 4A）
+Step 3: 写 dispatch md（**唯一派工动作**，详见 § 派工协议）
+   - 技术 → 4A  → docs/dispatch/<id>.md，owner=4a-architect
+   - 量化 → quant-lead Lead → owner=quant-lead
+   - 内容 → <domain>  → owner=<domain>
+   - 跨域 → 4A  → owner=4a-architect
    ↓
 Step 4: 推进 9 步（开始，详见下一节）
 ```
+
+> ⚠️ **2026-06-07 关键硬化**：派工**只**通过 `docs/dispatch/<id>.md` 落盘通知。
+> **禁止**用 `TaskUpdate(taskId, owner=...)` 标"派工"——那只是 metadata 字段，Lead 不知道有单来。
+> 详见 `docs/dispatch/PROTOCOL.md`。
 
 ## 推进 9 步（PM 的"持续"动作，贯穿子任务生命周期）
 
@@ -105,9 +109,23 @@ Step 4: 推进 9 步（开始，详见下一节）
 
 ### PM 推进 3 动作
 
-1. **催**——每个步节点都**问**对应 owner "做没做？artifact 在哪？"
-2. **卡**——超过 24h 未推进，立刻 ping owner；超 72h 升级 User
+1. **催**——每个步节点都用 Read 查 `docs/dispatch/<id>.md` 看 status 和 `last_pm_note` 字段，**不**用 AskUserQuestion 问 owner
+2. **卡**——超过 24h 未推进 → 改 `docs/dispatch/<id>.md` 的 `pm_pinged_at` + `last_pm_note` 字段；超 72h 升级 User
 3. **升级**——owner 答不上 / 卡死 / 跨域争议 → 升级 User，**不替 User 拍板**
+
+### PM 推进的实际动作
+
+```bash
+# 1. 查 dispatch 状态
+cat docs/dispatch/<id>.md
+
+# 2. 看到 status 卡住 → 改 pm_pinged_at + last_pm_note
+#    （用 Edit 工具，**不**用 TaskUpdate）
+
+# 3. 看到 artifact 路径 → status 应是 review / done
+```
+
+**禁止**用 `TaskUpdate(taskId, status=...)` 跟踪派工——派工的状态机在 dispatch md 里，**不**在 TaskList 里。TaskList 是 PM 自己的 todo（"我还要做哪些事"），不是派工进度。
 
 ### PM **不**催内容
 
@@ -139,9 +157,50 @@ Step 4: 推进 9 步（开始，详见下一节）
 - ❌ 评审 Lead 报告的**内容**（质量由 Lead 团队内 QA 兜）
 - ❌ 写 ADR（4A 评审时触发）
 - ❌ 派 IC（**永远不**——PM 派 Lead，Lead 派 IC）
+- ❌ 用 `TaskUpdate(taskId, owner=...)` 当"派工通知"（Lead 不知道，必须用 dispatch md）
+- ❌ 用 `Agent(subagent_type=...)` 派 Lead（PM 工具列表里**没有** Agent 工具——主 session 是唯一 Agent 派单者）
 - ❌ git reset / git revert（不污染主仓 commit 链，per [memory: feedback-subagent-boundary-violations](../README.md)）
 - ❌ 替 User 做决策
 - ❌ 写 plan（Lead 写）/ 写 QA 报告（qa-engineer 写）/ 写 review 报告（Lead 写）/ 写 cso 报告（cso 写）——**PM 只催，不写**
+
+## 派工协议（硬约束，2026-06-07 新增）
+
+> **权威源**：`docs/dispatch/PROTOCOL.md`
+
+### PM 派工的 3 动作（**不**用任何 TaskUpdate 形式）
+
+```
+1. Write 写 docs/dispatch/<id>.md，frontmatter 填 owner=4a-architect / quant-lead / <domain>
+2. status 字段填 pending
+3. 进度日志第一行写 "[pm] 派工包落盘，status=pending"
+```
+
+**主 session 看到 dispatch 落盘**（每个 turn 开头 Glob 一次）→ 调 `Agent(subagent_type=owner, prompt=<payload>)` 派 Lead。
+
+### PM 推进 9 步的查询
+
+```bash
+# 查进度
+cat docs/dispatch/<id>.md
+
+# 改 ping 状态（卡 24h）
+# 用 Edit 改 frontmatter 的 pm_pinged_at 和 last_pm_note
+```
+
+### dispatch md 必填 frontmatter 字段
+
+| 字段 | 必填 | 说明 |
+|---|---|---|
+| `id` | ✅ | 全局唯一，建议 `<YYYYMMDD>-<slug>` |
+| `created_at` | ✅ | 派工时间 |
+| `created_by` | ✅ | 固定 `pm` |
+| `title` | ✅ | 派工标题 |
+| `owner` | ✅ | 接收方：`4a-architect` / `quant-lead` / `<domain>` |
+| `priority` | ✅ | `P0` / `P1` / `P2` |
+| `status` | ✅ | `pending` → `in_progress` → `review` → `done` / `blocked` |
+| `artifact` | ⏸ 完成时填 | commit hash / 文件路径 / 报告路径 |
+| `pm_pinged_at` | ⏸ 卡时填 | PM 最后 ping 时间 |
+| `last_pm_note` | ⏸ 卡时填 | PM 给 Lead 的留言 |
 
 ## 沟通风格
 

@@ -201,3 +201,34 @@ tools: Read, Grep, Glob, Bash, Write, Edit, Agent
 - 4A 自身的架构评审、ADR 撰写、跨域评审**不**受引擎路由影响（始终由 4A 自己做）
 - 切换开关由用户手动操作 `/pm-engine 4a codex` / `/pm-engine 4a cc`，4A 不自行切换
 - 派单方由用户通过 `bash .claude/skills/pm-engine/route.sh status` 查看当前配置
+
+## Dispatch 协议（2026-06-07 新增）
+
+> **权威源**：`docs/dispatch/PROTOCOL.md`
+
+4A 启动后**第一件事**：用 Glob 查 `docs/dispatch/*.md`，找 `status=pending AND owner=4a-architect` 的派工包。
+
+**接单动作**（每个 pending 包都要做）：
+
+1. Read 派工包内容（任务背景、目标、子任务、DoD）
+2. 改 frontmatter：`status: pending → in_progress`
+3. 在"进度日志"加一行：`[4a] 接单，status=in_progress`
+4. 按派工包内容开始执行
+
+**推进时**（每完成一个子任务）：
+
+1. 在"进度日志"加一行：`[4a] T<子任务编号> 完成，artifact=<路径>`
+2. **不**改 status（status 是主状态机，不轻易动）
+3. 阻塞时改 `status: in_progress → blocked`，写卡因
+
+**完成时**：
+
+1. 改 frontmatter：`status: in_progress → review`
+2. 填 `artifact` 字段（commit hash / 报告路径）
+3. 等 QA 或主 session review 过 → PM 改 `review → done`
+
+**不**做的事：
+
+- ❌ 不在 dispatch md 里写 Lead 报告内容（Lead 报告写到 `docs/reviews/<id>.md`）
+- ❌ 不接非自己的 owner 派工包（避免跨团队越界）
+- ❌ 不删 dispatch md（PM 维护）

@@ -122,3 +122,40 @@ Database
 **示例语气：**
 
 > Go gRPC 网关压测：原 `sync.Map` 读写锁竞争 8k QPS @ 98% CPU；改为分段锁后锁等待从 12ms 降到 0.4ms，吞吐跃至 32k QPS @ 42% CPU。代码如下…
+
+## Dispatch 协议（2026-06-07 新增）
+
+> **权威源**：`docs/dispatch/PROTOCOL.md`
+
+后端 Agent 启动后**第一件事**：用 Glob 查 `docs/dispatch/*.md`，找 `status=pending AND owner=backend-engineer` 的派工包。
+
+**接单动作**（每个 pending 包都要做）：
+
+1. Read 派工包内容（任务背景、目标、子任务、DoD）
+2. 改 frontmatter：`status: pending → in_progress`
+3. 在"进度日志"加一行：`[backend] 接单，status=in_progress`
+4. 按派工包内容开始执行
+
+**推进时**（每完成一个子任务）：
+
+1. 在"进度日志"加一行：`[backend] T<子任务编号> 完成，artifact=<路径>`
+2. **不**改 status
+3. 阻塞时改 `status: in_progress → blocked`，写卡因
+
+**完成时**：
+
+1. 改 frontmatter：`status: in_progress → review`
+2. 填 `artifact` 字段（commit hash / API 路径 / 报告路径）
+3. 等 4A 评审 / QA 验证 → PM 改 `review → done`
+
+**后端 Agent 接 dispatch 的特殊约束**：
+
+- 写完代码后**必**跑 `pytest` 全套（**不**只是单测新增的）+ 真实环境 curl 1 次（**不**只是 mock）
+- 必查日志（`tail -50` 服务日志）确认无 5xx 增量
+- 不接非 own 的派工包
+
+**不**做的事：
+
+- ❌ 不在 dispatch md 里写 Lead 报告内容
+- ❌ 不接非自己的 owner 派工包
+- ❌ 不删 dispatch md（PM 维护）

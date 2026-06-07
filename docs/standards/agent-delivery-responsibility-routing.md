@@ -131,3 +131,57 @@
 - [ ] 单一事实源是否已声明（契约 / 表 / 配置 / 文档 / 测试）
 - [ ] 是否已排除把前端、后端、数据三类实现工作混成一个默认 owner
 - [ ] 是否需要同时拉入 `devops-engineer` 和 `qa-engineer`
+
+## 8. Dispatch 协议（**关键** 2026-06-07 新增）
+
+> **权威源**：`docs/dispatch/PROTOCOL.md`
+
+### 为什么需要新协议
+
+老协议：PM 用 `TaskUpdate(taskId, owner=...)` 标"派工"——**但 Lead 不知道**有派单来了。
+- PM 工具列表**没有** `Agent()`，没法直接派 Lead
+- Lead 不读 `TaskList`，所以 `TaskUpdate` 设 owner 等于啥也没干
+- 派工通知靠"prompt 里写约束 + LLM 自觉"——**不可靠**
+
+新协议：**派工 = 写文件**（dispatch md 落盘 = ground truth 通知）
+
+```
+PM 写 docs/dispatch/<id>.md（status=pending, owner=4a-architect）
+   ↓
+主 session 每个 turn 开头 Glob dispatch/ 发现 pending 包
+   ↓
+主 session 调 Agent(subagent_type=owner) 派 Lead
+   ↓
+Lead 改 status=in_progress，推进，status=review
+   ↓
+QA / review 过，PM 改 status=done
+```
+
+### 角色动作速查
+
+| 角色 | 何时 | 动作 | 改 dispatch md 哪部分 |
+|---|---|---|---|
+| **PM** | 派工 | Write 新 dispatch md | 整文件落盘，status=pending |
+| **PM** | 推进 9 步 | Read 查 status | 改 `pm_pinged_at` / `last_pm_note` |
+| **PM** | 升级 | 改 status=blocked + 升级 User | status + 写卡因 |
+| **主 session** | 每个 turn 开头 | Glob dispatch/ 找 pending | 调 Agent() 派 Lead |
+| **Lead** | 启动 | Glob 查 own 的 pending | 改 status=in_progress + 进度日志 |
+| **Lead** | 完成 | 改 status=review | 填 artifact 字段 |
+| **QA** | 验收 | 改 status=done（如果主 session 也是 QA） | status |
+
+### 硬约束（不遵守 = 派工失败）
+
+1. **PM 禁止用 `TaskUpdate(owner=...)` 当派工通知**——那只是 metadata，Lead 不知道
+2. **PM 禁止用 `Agent(subagent_type=...)` 派 Lead**——PM 工具列表里**没有** Agent 工具
+3. **Lead 启动后必须 Glob dispatch/**——不查 = 不接单 = 派工堆积
+4. **主 session 每个 turn 开头必须 Glob dispatch/ 找 pending**——不轮询 = 派工永远 pending
+5. **status 状态机单向**：`pending → in_progress → review → done`，卡住时改 `blocked`（用 `pm_pinged_at` 标记时间）
+
+### 与 TaskCreate / TaskUpdate 的边界
+
+| 工具 | 适用 | 不适用 |
+|---|---|---|
+| `TaskCreate` / `TaskUpdate` | PM 自己的 todo list（"我还要做哪些事"）| 派工通知（用 dispatch md）|
+| `docs/dispatch/<id>.md` | 派工通知 + Lead 进度跟踪 + PM 推进 9 步 | PM 内部 todo |
+
+**简单记忆**：**派工 = 文件**，**todo = TaskList**——别混。
